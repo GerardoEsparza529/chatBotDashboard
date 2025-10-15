@@ -2,6 +2,8 @@
 
 Dashboard moderno construido con React y Vite para visualizar conversaciones y mensajes del bot de WhatsApp.
 
+![Dashboard Preview](https://img.shields.io/badge/React-19-blue) ![Vite](https://img.shields.io/badge/Vite-4.5.3-green) ![License](https://img.shields.io/badge/License-MIT-yellow)
+
 ## 🚀 Características
 
 - **Dashboard en tiempo real** con estadísticas del bot
@@ -25,29 +27,77 @@ Dashboard moderno construido con React y Vite para visualizar conversaciones y m
 
 - Node.js 20.13+ 
 - npm o yarn
-- Servidor backend del bot WhatsApp ejecutándose
+- **Servidor backend del bot WhatsApp ejecutándose** (ver [Backend Setup](#backend-setup))
 
 ### Pasos de instalación
 
-1. **Instalar dependencias**
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/GerardoEsparza529/chatBotDashboard.git
+   cd chatBotDashboard
+   ```
+
+2. **Instalar dependencias**
    ```bash
    npm install
    ```
 
-2. **Configurar variables de entorno** (opcional)
+3. **Configurar variables de entorno** (opcional)
    ```bash
    # La API por defecto apunta a http://localhost:3009/api
    ```
 
-3. **Iniciar servidor de desarrollo**
+4. **Iniciar servidor de desarrollo**
    ```bash
    npm run dev
    ```
 
-4. **Abrir en navegador**
+5. **Abrir en navegador**
    ```
    http://localhost:5173
    ```
+
+## 🔧 Backend Setup
+
+Este dashboard requiere un servidor backend que exponga la API de datos del bot de WhatsApp.
+
+### Servidor API requerido (puerto 3009)
+
+El backend debe incluir un servidor como este:
+
+```javascript
+// api-server.js
+import express from 'express';
+import cors from 'cors';
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Endpoints requeridos
+app.get('/api/stats', async (req, res) => {
+  // Retornar estadísticas
+});
+
+app.get('/api/conversations', async (req, res) => {
+  // Retornar lista de conversaciones
+});
+
+app.get('/api/conversations/:id/messages', async (req, res) => {
+  // Retornar mensajes de una conversación
+});
+
+app.listen(3009, () => {
+  console.log('API running on http://localhost:3009');
+});
+```
+
+### Iniciar el backend
+
+```bash
+# En el directorio del proyecto del bot
+node api-server.js
+```
 
 ## 🔧 Configuración
 
@@ -78,6 +128,45 @@ npm run build        # Build para producción
 npm run preview      # Vista previa de build
 npm run lint         # Ejecutar ESLint
 ```
+
+## 🏗️ Estructura del Proyecto
+
+```
+src/
+├── components/
+│   ├── Dashboard/
+│   │   ├── Dashboard.jsx      # Componente principal
+│   │   └── StatsCards.jsx     # Tarjetas de estadísticas
+│   ├── Chat/
+│   │   ├── ChatInterface.jsx  # Interfaz de chat
+│   │   ├── ConversationList.jsx # Lista de conversaciones
+│   │   └── MessageView.jsx    # Vista de mensajes
+│   └── Layout/
+│       └── Header.jsx         # Cabecera
+├── hooks/
+│   ├── useStats.js           # Hook para estadísticas
+│   ├── useConversations.js   # Hook para conversaciones
+│   └── useMessages.js        # Hook para mensajes
+├── services/
+│   └── api.js                # Cliente API
+└── App.jsx                   # Componente raíz
+```
+
+## 🌐 Demo
+
+Visita el repositorio: [https://github.com/GerardoEsparza529/chatBotDashboard](https://github.com/GerardoEsparza529/chatBotDashboard)
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crear rama feature (`git checkout -b feature/AmazingFeature`)
+3. Commit cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
 
 ## React Compiler
 
