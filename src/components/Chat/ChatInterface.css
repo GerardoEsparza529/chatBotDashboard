@@ -1,0 +1,87 @@
+/**
+ * Estilos para la interfaz de chat
+ */
+
+.chat-interface {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+  height: 100%;
+  min-height: 600px;
+}
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.conversations-panel {
+  min-width: 350px;
+}
+
+.messages-panel {
+  min-width: 0;
+}
+
+.error-message {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem;
+  color: #dc2626;
+  text-align: center;
+}
+
+.error-message p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.retry-button {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #b91c1c;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .chat-interface {
+    grid-template-columns: 1fr 1.5fr;
+    gap: 1rem;
+  }
+  
+  .conversations-panel {
+    min-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-interface {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    height: auto;
+  }
+  
+  .chat-panel {
+    min-height: 400px;
+  }
+  
+  .conversations-panel {
+    min-width: auto;
+  }
+  
+  .messages-panel {
+    min-height: 500px;
+  }
+}

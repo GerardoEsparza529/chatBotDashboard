@@ -1,0 +1,270 @@
+/**
+ * Estilos para la lista de conversaciones
+ */
+
+.conversation-list {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.conversation-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.conversation-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.conversation-count {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.search-container {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box.loading {
+  height: 40px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #9ca3af;
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #075e54;
+  box-shadow: 0 0 0 3px rgba(7, 94, 84, 0.1);
+}
+
+.search-skeleton {
+  height: 40px;
+  background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+.conversations-container {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 300px);
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 12px;
+}
+
+.conversation-item:hover {
+  background: #f9fafb;
+}
+
+.conversation-item.active {
+  background: #eff6ff;
+  border-left: 4px solid #075e54;
+  border-bottom-color: #e0e7ff;
+}
+
+.conversation-item.loading {
+  cursor: default;
+}
+
+.conversation-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #6b7280;
+}
+
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.conversation-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.conversation-time {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.conversation-preview {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-skeleton {
+  height: 60px;
+  background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.empty-icon {
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.pagination {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+}
+
+.pagination-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #075e54;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: #064e46;
+  transform: translateY(-1px);
+}
+
+.pagination-button:disabled {
+  background: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .conversation-list {
+    border-radius: 8px;
+  }
+  
+  .conversation-header {
+    padding: 1rem;
+  }
+  
+  .search-container {
+    padding: 0.75rem 1rem;
+  }
+  
+  .conversation-item {
+    padding: 0.75rem 1rem;
+  }
+  
+  .conversation-avatar {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .conversation-name {
+    font-size: 0.85rem;
+  }
+  
+  .conversation-preview {
+    font-size: 0.75rem;
+  }
+  
+  .pagination {
+    padding: 0.75rem 1rem;
+  }
+}

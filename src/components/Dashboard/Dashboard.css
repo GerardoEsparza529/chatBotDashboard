@@ -1,0 +1,34 @@
+/**
+ * Estilos para el Dashboard
+ */
+
+.dashboard {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.stats-section {
+  margin-bottom: 2rem;
+}
+
+.chat-section {
+  height: calc(100vh - 280px);
+  min-height: 600px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 1rem;
+  }
+  
+  .chat-section {
+    height: auto;
+    min-height: 500px;
+  }
+}
