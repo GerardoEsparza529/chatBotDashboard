@@ -4,26 +4,61 @@
 
 import axios from 'axios';
 
-// URL base del API del bot - ajusta según tu configuración
-const BASE_URL = 'http://localhost:3009/api';
+// URL base del API del bot - configurable via variables de entorno
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3009/api';
+const API_TIMEOUT = import.meta.env.VITE_API_TIMEOUT || 10000;
+const DEBUG_MODE = import.meta.env.VITE_DEBUG === 'true';
 
 // Crear instancia de axios con configuración base
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000,
+  timeout: parseInt(API_TIMEOUT),
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Interceptor para manejo de errores
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error('API Error:', error);
-    return Promise.reject(error);
-  }
-);
+// Interceptor para logging en modo debug
+if (DEBUG_MODE) {
+  api.interceptors.request.use((config) => {
+    console.log('🔍 API Request:', {
+      method: config.method?.toUpperCase(),
+      url: `${config.baseURL}${config.url}`,
+      params: config.params,
+      data: config.data
+    });
+    return config;
+  });
+
+  api.interceptors.response.use(
+    (response) => {
+      console.log('✅ API Response:', {
+        status: response.status,
+        url: response.config.url,
+        data: response.data
+      });
+      return response;
+    },
+    (error) => {
+      console.error('❌ API Error:', {
+        status: error.response?.status,
+        url: error.config?.url,
+        message: error.message,
+        data: error.response?.data
+      });
+      return Promise.reject(error);
+    }
+  );
+} else {
+  // Interceptor para manejo de errores en producción
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      console.error('API Error:', error.message);
+      return Promise.reject(error);
+    }
+  );
+}
 
 /**
  * Obtener estadísticas generales del bot

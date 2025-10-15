@@ -42,9 +42,16 @@ Dashboard moderno construido con React y Vite para visualizar conversaciones y m
    npm install
    ```
 
-3. **Configurar variables de entorno** (opcional)
+3. **Configurar variables de entorno**
    ```bash
-   # La API por defecto apunta a http://localhost:3009/api
+   # Copiar el archivo de ejemplo
+   cp .env.example .env.local
+   
+   # Editar las variables según tu configuración
+   # .env.local
+   VITE_API_BASE_URL=http://localhost:3009/api
+   VITE_API_TIMEOUT=10000
+   VITE_DEBUG=true
    ```
 
 4. **Iniciar servidor de desarrollo**
@@ -100,6 +107,32 @@ node api-server.js
 ```
 
 ## 🔧 Configuración
+
+### Variables de Entorno
+
+El proyecto utiliza las siguientes variables de entorno:
+
+| Variable | Descripción | Valor por defecto | Requerido |
+|----------|-------------|-------------------|-----------|
+| `VITE_API_BASE_URL` | URL base de la API del backend | `http://localhost:3009/api` | ✅ |
+| `VITE_API_TIMEOUT` | Timeout de requests en ms | `10000` | ❌ |
+| `VITE_DEBUG` | Habilitar logs de debug | `false` | ❌ |
+
+#### Configuración para diferentes entornos
+
+**Desarrollo local (.env.local)**
+```env
+VITE_API_BASE_URL=http://localhost:3009/api
+VITE_API_TIMEOUT=10000
+VITE_DEBUG=true
+```
+
+**Producción (.env.production)**
+```env
+VITE_API_BASE_URL=https://tu-servidor.com/api
+VITE_API_TIMEOUT=15000
+VITE_DEBUG=false
+```
 
 ### Configuración de API
 
