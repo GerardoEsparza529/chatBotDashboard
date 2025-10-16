@@ -4,14 +4,18 @@
 
 .app {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden; /* Prevenir scroll horizontal */
 }
 
 .main-content {
   flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0; /* Permite que flex children se encojan */
 }
 
 /* Reset y estilos base */
@@ -19,14 +23,26 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
+  width: 100%;
   margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevenir scroll horizontal global */
+}
+
+body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #f8f9fa;
+}
+
+/* Contenedor raíz */
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
 
 /* Estilos para scrollbars */
@@ -36,6 +52,7 @@ body {
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -45,4 +62,19 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Mejorar scrollbars en modo oscuro */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track {
+    background: #2d3748;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #4a5568;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #718096;
+  }
 }

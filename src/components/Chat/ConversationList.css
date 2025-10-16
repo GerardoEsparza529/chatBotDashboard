@@ -10,12 +10,14 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
 }
 
 .conversation-header {
   padding: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   background: #f9fafb;
+  flex-shrink: 0; /* No se encoge */
 }
 
 .conversation-header h2 {
@@ -23,6 +25,7 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: #111827;
+  word-break: break-word; /* Para texto largo en pantallas pequeñas */
 }
 
 .conversation-count {

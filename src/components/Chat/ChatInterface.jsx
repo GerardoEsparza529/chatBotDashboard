@@ -44,7 +44,8 @@ const ChatInterface = ({ onRefresh }) => {
   // Manejar búsqueda
   const handleSearch = (query) => {
     search(query);
-    setSelectedConversationId(null); // Limpiar selección al buscar
+    // NO limpiar la selección al buscar para mantener la conversación abierta
+    // setSelectedConversationId(null); 
   };
 
   // Manejar refresh general
@@ -60,7 +61,7 @@ const ChatInterface = ({ onRefresh }) => {
   };
 
   return (
-    <div className="chat-interface">
+    <div className={`chat-interface ${(conversationsLoading || messagesLoading) ? 'loading' : ''}`}>
       {/* Panel de conversaciones */}
       <div className="chat-panel conversations-panel">
         <ConversationList
@@ -76,9 +77,9 @@ const ChatInterface = ({ onRefresh }) => {
         
         {conversationsError && (
           <div className="error-message">
-            <p>Error: {conversationsError}</p>
+            <p>❌ Error cargando conversaciones: {conversationsError}</p>
             <button onClick={refreshConversations} className="retry-button">
-              Reintentar
+              🔄 Reintentar
             </button>
           </div>
         )}
@@ -97,9 +98,9 @@ const ChatInterface = ({ onRefresh }) => {
         
         {messagesError && (
           <div className="error-message">
-            <p>Error: {messagesError}</p>
+            <p>❌ Error cargando mensajes: {messagesError}</p>
             <button onClick={refreshMessages} className="retry-button">
-              Reintentar
+              🔄 Reintentar
             </button>
           </div>
         )}

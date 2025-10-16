@@ -14,15 +14,15 @@ export const useConversations = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Cargar conversaciones
-  const loadConversations = useCallback(async (page = 1) => {
+  const loadConversations = useCallback(async (page = 1, query = searchQuery) => {
     try {
       setLoading(true);
       setError(null);
 
       let data;
-      if (searchQuery.trim()) {
+      if (query.trim()) {
         // Si hay búsqueda, buscar mensajes
-        data = await searchMessages(searchQuery, page);
+        data = await searchMessages(query, page);
         // Transformar resultados de búsqueda a formato de conversaciones
         const conversationsFromSearch = data.messages.map(msg => ({
           id: msg.Conversation?.id,
@@ -47,7 +47,7 @@ export const useConversations = () => {
     }
   }, [searchQuery]);
 
-  // Cargar conversaciones al montar el componente o cambiar la búsqueda
+  // Cargar conversaciones al montar el componente
   useEffect(() => {
     loadConversations(1);
   }, [loadConversations]);
