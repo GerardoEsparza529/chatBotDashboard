@@ -1,0 +1,253 @@
+/**
+ * Header - Diseño Minimalista y Profesional
+ */
+
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-4) var(--space-6);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-dropdown);
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+/* === LOGO Y BRANDING === */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.header-brand h1 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.header-logo {
+  width: 32px;
+  height: 32px;
+  color: var(--accent-600);
+}
+
+/* === ESTADÍSTICAS DE CONEXIÓN === */
+.header-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.connection-status.connected {
+  background: var(--success-50);
+  color: var(--success-700);
+  border: 1px solid var(--success-200);
+}
+
+.connection-status.disconnected {
+  background: var(--error-50);
+  color: var(--error-700);
+  border: 1px solid var(--error-200);
+}
+
+.connection-status.connecting {
+  background: var(--warning-50);
+  color: var(--warning-700);
+  border: 1px solid var(--warning-200);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+}
+
+.status-indicator.connected {
+  background: var(--success-500);
+  animation: pulse-success 2s infinite;
+}
+
+.status-indicator.disconnected {
+  background: var(--error-500);
+}
+
+.status-indicator.connecting {
+  background: var(--warning-500);
+  animation: pulse-warning 1s infinite;
+}
+
+/* === ACCIONES DEL HEADER === */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.header-button {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--gray-600);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.header-button:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-300);
+  color: var(--gray-900);
+}
+
+.header-button.primary {
+  background: var(--accent-600);
+  border-color: var(--accent-600);
+  color: white;
+}
+
+.header-button.primary:hover {
+  background: var(--accent-700);
+  border-color: var(--accent-700);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-subtle);
+}
+
+/* === TIMESTAMP === */
+.last-update {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .header {
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .header-content {
+    gap: var(--space-4);
+  }
+  
+  .header-brand h1 {
+    font-size: var(--text-lg);
+  }
+  
+  .header-stats {
+    gap: var(--space-2);
+  }
+  
+  .connection-status {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+  }
+  
+  .header-actions {
+    gap: var(--space-2);
+  }
+  
+  .header-button {
+    padding: var(--space-2);
+    font-size: var(--text-xs);
+  }
+  
+  .last-update {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: stretch;
+  }
+  
+  .header-brand {
+    justify-content: center;
+  }
+  
+  .header-stats {
+    justify-content: center;
+  }
+  
+  .header-actions {
+    justify-content: center;
+  }
+}
+
+/* === ANIMACIONES === */
+@keyframes pulse-success {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes pulse-warning {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* === MODO OSCURO === */
+@media (prefers-color-scheme: dark) {
+  .header {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: var(--gray-700);
+  }
+  
+  .header-brand h1 {
+    color: var(--gray-100);
+  }
+  
+  .header-button {
+    border-color: var(--gray-700);
+    color: var(--gray-300);
+  }
+  
+  .header-button:hover {
+    background: var(--gray-800);
+    border-color: var(--gray-600);
+    color: var(--gray-100);
+  }
+  
+  .last-update {
+    color: var(--gray-400);
+  }
+}

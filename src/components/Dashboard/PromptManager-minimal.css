@@ -1,0 +1,394 @@
+/**
+ * PromptManager - Diseño Minimalista y Profesional
+ */
+
+/* === OVERLAY Y MODAL === */
+.prompt-manager-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: var(--z-modal);
+  backdrop-filter: blur(4px);
+}
+
+.prompt-manager-modal {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  width: 90%;
+  max-width: 1000px;
+  height: 90%;
+  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-hover);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* === ENCABEZADO === */
+.prompt-manager-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  color: var(--gray-900);
+  padding: var(--space-5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prompt-manager-header h2 {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--gray-900);
+}
+
+.close-button {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-300);
+  color: var(--gray-900);
+}
+
+/* === CONTENIDO PRINCIPAL === */
+.prompt-manager-content {
+  flex: 1;
+  padding: var(--space-5);
+  overflow-y: auto;
+  background: var(--background);
+}
+
+/* === HEADER DE ACCIONES === */
+.prompt-actions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.add-prompt-button {
+  background: var(--accent-600);
+  color: white;
+  border: none;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.add-prompt-button:hover {
+  background: var(--accent-700);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-subtle);
+}
+
+/* === LISTA DE PROMPTS === */
+.prompts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.prompt-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.prompt-item:hover {
+  border-color: var(--accent-200);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-1px);
+}
+
+.prompt-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+  gap: var(--space-4);
+}
+
+.prompt-info {
+  flex: 1;
+}
+
+.prompt-info h3 {
+  margin: 0 0 var(--space-1) 0;
+  color: var(--gray-900);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.prompt-type {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-100);
+  color: var(--accent-700);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.prompt-preview {
+  color: var(--gray-600);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin-top: var(--space-2);
+  max-height: 60px;
+  overflow: hidden;
+}
+
+.prompt-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* === FORMULARIO === */
+.prompt-form {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  margin-top: var(--space-5);
+  overflow: hidden;
+}
+
+.form-header {
+  background: var(--gray-50);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.form-header h3 {
+  margin: 0;
+  color: var(--gray-900);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.form-content {
+  padding: var(--space-5);
+}
+
+.form-group {
+  margin-bottom: var(--space-4);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--gray-700);
+  font-weight: 500;
+  font-size: var(--text-sm);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-family: var(--font-family-sans);
+  transition: all var(--transition-fast);
+  background: var(--surface);
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-500);
+  box-shadow: var(--shadow-focus);
+}
+
+.form-group textarea {
+  min-height: 150px;
+  resize: vertical;
+  font-family: var(--font-family-mono);
+  line-height: 1.5;
+}
+
+/* === BOTONES === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent-600);
+  border-color: var(--accent-600);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-700);
+  border-color: var(--accent-700);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-subtle);
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--gray-700);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--gray-50);
+  border-color: var(--gray-300);
+  color: var(--gray-900);
+}
+
+.btn-danger {
+  background: var(--error-600);
+  border-color: var(--error-600);
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--error-700);
+  border-color: var(--error-700);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-subtle);
+}
+
+.btn-small {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+}
+
+/* === ACCIONES DEL FORMULARIO === */
+.form-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-5);
+}
+
+/* === ESTADOS === */
+.empty-state {
+  text-align: center;
+  padding: var(--space-10);
+  color: var(--gray-500);
+}
+
+.empty-state h3 {
+  margin: 0 0 var(--space-2) 0;
+  color: var(--gray-700);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.empty-state p {
+  margin: 0 0 var(--space-4) 0;
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10);
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--gray-200);
+  border-top: 2px solid var(--accent-600);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .prompt-manager-modal {
+    width: 95vw;
+    height: 95vh;
+  }
+  
+  .prompt-manager-header,
+  .prompt-manager-content {
+    padding: var(--space-4);
+  }
+  
+  .prompt-item-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

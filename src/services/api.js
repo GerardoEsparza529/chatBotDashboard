@@ -5,7 +5,7 @@
 import axios from 'axios';
 
 // URL base del API del bot - configurable via variables de entorno
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3009/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 const API_TIMEOUT = import.meta.env.VITE_API_TIMEOUT || 10000;
 const DEBUG_MODE = import.meta.env.VITE_DEBUG === 'true';
 
@@ -122,6 +122,91 @@ export const searchMessages = async (query, page = 1, limit = 20) => {
     return response.data;
   } catch (error) {
     console.error('Error en búsqueda:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtener lista de negocios
+ */
+export const getBusinesses = async () => {
+  try {
+    const response = await api.get('/businesses');
+    return response.data;
+  } catch (error) {
+    console.error('Error obteniendo negocios:', error);
+    throw error;
+  }
+};
+
+/**
+ * Actualizar credenciales META de un negocio
+ * @param {string} businessId - ID del negocio
+ * @param {object} credentials - Objeto con las credenciales META
+ */
+export const updateBusinessCredentials = async (businessId, credentials) => {
+  try {
+    const response = await api.put(`/businesses/${businessId}/credentials`, credentials);
+    return response.data;
+  } catch (error) {
+    console.error('Error actualizando credenciales:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtener prompts de un negocio
+ * @param {string} businessId - ID del negocio
+ */
+export const getBusinessPrompts = async (businessId) => {
+  try {
+    const response = await api.get(`/businesses/${businessId}/prompts`);
+    return response.data;
+  } catch (error) {
+    console.error('Error obteniendo prompts:', error);
+    throw error;
+  }
+};
+
+/**
+ * Crear un nuevo prompt
+ * @param {object} promptData - Datos del prompt
+ */
+export const createPrompt = async (promptData) => {
+  try {
+    const response = await api.post('/prompts', promptData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creando prompt:', error);
+    throw error;
+  }
+};
+
+/**
+ * Actualizar un prompt
+ * @param {string} promptId - ID del prompt
+ * @param {object} promptData - Datos del prompt
+ */
+export const updatePrompt = async (promptId, promptData) => {
+  try {
+    const response = await api.put(`/prompts/${promptId}`, promptData);
+    return response.data;
+  } catch (error) {
+    console.error('Error actualizando prompt:', error);
+    throw error;
+  }
+};
+
+/**
+ * Eliminar un prompt
+ * @param {string} promptId - ID del prompt
+ */
+export const deletePrompt = async (promptId) => {
+  try {
+    const response = await api.delete(`/prompts/${promptId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error eliminando prompt:', error);
     throw error;
   }
 };
