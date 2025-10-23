@@ -138,13 +138,16 @@ class WebSocketService {
 
   // Escuchar eventos de nuevos mensajes desde ambos servidores
   onNewMessage(callback) {
+    // Remover listeners anteriores para evitar duplicados
     if (this.apiSocket) {
+      this.apiSocket.off('new-message');
       this.apiSocket.on('new-message', (data) => {
         console.log('📨 Nuevo mensaje desde API:', data);
         callback(data);
       });
     }
     if (this.botSocket) {
+      this.botSocket.off('new-message');
       this.botSocket.on('new-message', (data) => {
         console.log('📨 Nuevo mensaje desde Bot Service:', data);
         callback(data);
@@ -154,13 +157,16 @@ class WebSocketService {
 
   // Escuchar eventos de cambio de estado del bot
   onBotStatusChange(callback) {
+    // Remover listeners anteriores para evitar duplicados
     if (this.apiSocket) {
+      this.apiSocket.off('bot-status-change');
       this.apiSocket.on('bot-status-change', (data) => {
         console.log('🤖 Cambio de estado del bot desde API:', data);
         callback(data);
       });
     }
     if (this.botSocket) {
+      this.botSocket.off('bot-status-change');
       this.botSocket.on('bot-status-change', (data) => {
         console.log('🤖 Cambio de estado del bot desde Bot Service:', data);
         callback(data);

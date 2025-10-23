@@ -39,6 +39,18 @@ const MessageView = ({
     // Unirse a la sala de la conversación
     webSocketService.joinConversation(conversation.id);
 
+    // Cleanup al desmontar o cambiar conversación
+    return () => {
+      console.log(`🔌 Limpiando WebSocket para conversación ${conversation.id}`);
+      webSocketService.leaveConversation(conversation.id);
+      setRealtimeMessages([]); // Limpiar mensajes en tiempo real
+    };
+  }, [conversation?.id]); // Removido onInterventionAction de las dependencias
+
+  // 📨 Configurar listeners de WebSocket (separado para evitar recreaciones)
+  useEffect(() => {
+    if (!conversation?.id) return;
+
     // Escuchar nuevos mensajes
     const handleNewMessage = (data) => {
       console.log('📨 Nuevo mensaje recibido vía WebSocket:', data);
@@ -54,23 +66,32 @@ const MessageView = ({
           
           if (!exists) {
             console.log('✅ Agregando mensaje en tiempo real');
-            return [...prev, {
-              id: data.message?.id || `realtime-${Date.now()}`,
+            const newMessage = {
+              id: data.message?.id || `realtime-${Date.now()}-${Math.random()}`,
               content: data.message?.content || data.message?.message_content,
               sender: data.message?.sender || (data.message?.from_user ? 'user' : 'bot'),
               role: data.message?.role || (data.message?.from_user ? 'user' : 'assistant'),
               created_at: data.message?.timestamp || data.message?.created_at || new Date().toISOString(),
               metadata: data.message?.metadata || {},
               isRealtime: true
-            }];
+            };
+            
+            console.log('📤 Mensaje agregado a estado:', newMessage);
+            const updated = [...prev, newMessage];
+            console.log('📊 Total mensajes en tiempo real:', updated.length);
+            return updated;
+          } else {
+            console.log('⚠️ Mensaje duplicado, ignorando');
           }
           
           return prev;
         });
 
-        // Trigger intervention action para actualizar el estado general
+        // Trigger intervention action para actualizar el estado general (con delay)
         if (onInterventionAction) {
-          setTimeout(onInterventionAction, 500);
+          setTimeout(() => {
+            onInterventionAction();
+          }, 1000); // Delay más largo para evitar conflictos
         }
       }
     };
@@ -82,7 +103,7 @@ const MessageView = ({
       if (data.conversationId === conversation.id) {
         // Trigger intervention action para actualizar el estado
         if (onInterventionAction) {
-          setTimeout(onInterventionAction, 100);
+          setTimeout(onInterventionAction, 500);
         }
       }
     };
@@ -90,23 +111,40 @@ const MessageView = ({
     webSocketService.onNewMessage(handleNewMessage);
     webSocketService.onBotStatusChange(handleBotStatusChange);
 
-    // Cleanup al desmontar o cambiar conversación
+    // Cleanup solo para este listener
     return () => {
-      console.log(`🔌 Limpiando WebSocket para conversación ${conversation.id}`);
-      webSocketService.leaveConversation(conversation.id);
-      setRealtimeMessages([]); // Limpiar mensajes en tiempo real
+      // Solo remover listeners, no limpiar mensajes aquí
+      console.log('🧹 Limpiando listeners WebSocket');
     };
   }, [conversation?.id, onInterventionAction]);
 
-  // Limpiar mensajes en tiempo real cuando cambian los mensajes principales
+  // Limpiar mensajes en tiempo real solo cuando realmente cambian los mensajes principales
   useEffect(() => {
-    setRealtimeMessages([]);
-  }, [messages]);
+    // Solo limpiar si realmente hay mensajes diferentes
+    if (messages.length > 0) {
+      setRealtimeMessages(prev => {
+        // Filtrar mensajes en tiempo real que ya existen en messages
+        return prev.filter(rtMsg => 
+          !messages.some(msg => 
+            msg.id === rtMsg.id || 
+            (msg.content === rtMsg.content && Math.abs(new Date(msg.created_at) - new Date(rtMsg.created_at)) < 2000)
+          )
+        );
+      });
+    }
+  }, [messages]); // Usar messages completo
 
   // Combinar mensajes principales con mensajes en tiempo real
   const allMessages = [...messages, ...realtimeMessages].sort((a, b) => 
     new Date(a.created_at) - new Date(b.created_at)
   );
+
+  // Debug directo
+  console.log('📊 Estado actual de mensajes:', {
+    principalesCount: messages.length,
+    tiempoRealCount: realtimeMessages.length,
+    totalCount: allMessages.length
+  });
 
   // Scroll automático al final cuando se cargan nuevos mensajes
   useEffect(() => {
@@ -191,21 +229,54 @@ const MessageView = ({
       contentLength: newMessageContent.trim().length
     });
     
+    const messageContent = newMessageContent.trim();
     setIsSendingMessage(true);
+    
+    // 🚀 Agregar mensaje de forma optimista (aparece inmediatamente)
+    const optimisticMessage = {
+      id: `optimistic-${Date.now()}-${Math.random()}`,
+      content: messageContent,
+      sender: 'bot', // Los mensajes humanos se muestran como bot pero con metadata
+      role: 'assistant',
+      created_at: new Date().toISOString(),
+      metadata: {
+        sent_by_human: true,
+        human_operator_id: 'dashboard',
+        optimistic: true
+      },
+      isOptimistic: true
+    };
+    
+    setRealtimeMessages(prev => [...prev, optimisticMessage]);
+    setNewMessageContent(''); // Limpiar input inmediatamente
+    
     try {
-      const result = await sendHumanMessage(conversation.id, newMessageContent.trim());
+      const result = await sendHumanMessage(conversation.id, messageContent);
       console.log('✅ Respuesta API mensaje humano:', result);
       
-      setNewMessageContent('');
+      // Remover mensaje optimista y reemplazar con real si tiene ID
+      if (result.sent_message?.id) {
+        setRealtimeMessages(prev => 
+          prev.filter(msg => msg.id !== optimisticMessage.id)
+        );
+      }
+      
       console.log(`✅ Mensaje humano enviado en conversación ${conversation.id}`);
       
-      // Actualizar datos después de la acción
+      // Actualizar datos después de la acción (con menos delay ya que ya mostramos el mensaje)
       if (onInterventionAction) {
         console.log('🔄 Ejecutando onInterventionAction...');
-        await onInterventionAction();
-        console.log('✅ onInterventionAction completado');
+        setTimeout(() => {
+          onInterventionAction();
+        }, 200); // Delay menor ya que el mensaje ya está visible
+        console.log('✅ onInterventionAction programado');
       }
     } catch (error) {
+      // Si falla, remover el mensaje optimista
+      setRealtimeMessages(prev => 
+        prev.filter(msg => msg.id !== optimisticMessage.id)
+      );
+      
       console.error('❌ Error enviando mensaje humano:', error);
       console.error('❌ Error details:', {
         message: error.message,
@@ -213,6 +284,9 @@ const MessageView = ({
         data: error.response?.data
       });
       alert('Error enviando mensaje: ' + error.message);
+      
+      // Restaurar contenido del mensaje si falló
+      setNewMessageContent(messageContent);
     } finally {
       setIsSendingMessage(false);
     }
