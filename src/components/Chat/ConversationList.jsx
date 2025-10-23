@@ -193,6 +193,25 @@ const ConversationList = ({
         <h2>Conversaciones</h2>
         <div className="conversation-count">
           {sortedConversations.length} conversaciones
+          {/* 🧪 BOTÓN TEMPORAL DE TEST - REMOVER DESPUÉS */}
+          {window.location.hostname === 'localhost' && (
+            <button
+              onClick={() => window.location.reload()}
+              style={{ 
+                marginLeft: '10px', 
+                padding: '4px 8px', 
+                fontSize: '12px', 
+                backgroundColor: '#e74c3c', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+              title="🧪 Test: Reload page"
+            >
+              🔄
+            </button>
+          )}
         </div>
       </div>
       

@@ -54,10 +54,21 @@ const MessageView = ({
     // Escuchar nuevos mensajes
     const handleNewMessage = (data) => {
       console.log('📨 Nuevo mensaje recibido vía WebSocket:', data);
+      console.log('🔍 Verificando conversación:', {
+        dataConversationId: data.conversationId,
+        messageConversationId: data.message?.conversation_id,
+        currentConversationId: conversation.id,
+        match1: data.conversationId === conversation.id,
+        match2: data.message?.conversation_id === conversation.id
+      });
       
       if (data.conversationId === conversation.id || data.message?.conversation_id === conversation.id) {
+        console.log('✅ Mensaje corresponde a conversación actual, procesando...');
+        
         // Agregar el nuevo mensaje a la lista de mensajes en tiempo real
         setRealtimeMessages(prev => {
+          console.log('🔍 Estado previo de mensajes tiempo real:', prev.length);
+          
           // Evitar mensajes duplicados
           const exists = prev.some(msg => 
             msg.id === data.message?.id || 
@@ -78,7 +89,7 @@ const MessageView = ({
             
             console.log('📤 Mensaje agregado a estado:', newMessage);
             const updated = [...prev, newMessage];
-            console.log('📊 Total mensajes en tiempo real:', updated.length);
+            console.log('📊 Total mensajes en tiempo real después de agregar:', updated.length);
             return updated;
           } else {
             console.log('⚠️ Mensaje duplicado, ignorando');
@@ -87,12 +98,15 @@ const MessageView = ({
           return prev;
         });
 
-        // Trigger intervention action para actualizar el estado general (con delay)
-        if (onInterventionAction) {
-          setTimeout(() => {
-            onInterventionAction();
-          }, 1000); // Delay más largo para evitar conflictos
+        // NO llamar onInterventionAction inmediatamente para evitar conflictos con el nivel superior
+        console.log('⏰ El nivel superior ya maneja la actualización automática...');
+        // Solo llamar si no hay manejo superior (fallback)
+        if (!onInterventionAction) {
+          console.log('🔄 Fallback: No hay manejo superior, ejecutando actualización local');
+          // Aquí podrías agregar lógica de fallback si es necesario
         }
+      } else {
+        console.log('❌ Mensaje no corresponde a conversación actual, ignorando');
       }
     };
 
@@ -101,10 +115,9 @@ const MessageView = ({
       console.log('🤖 Cambio de estado del bot vía WebSocket:', data);
       
       if (data.conversationId === conversation.id) {
-        // Trigger intervention action para actualizar el estado
-        if (onInterventionAction) {
-          setTimeout(onInterventionAction, 500);
-        }
+        // El nivel superior ya maneja la actualización, solo logear
+        console.log('✅ Cambio de estado detectado para conversación actual');
+        // onInterventionAction será llamado por el nivel superior
       }
     };
 
@@ -139,12 +152,18 @@ const MessageView = ({
     new Date(a.created_at) - new Date(b.created_at)
   );
 
-  // Debug directo
-  console.log('📊 Estado actual de mensajes:', {
-    principalesCount: messages.length,
-    tiempoRealCount: realtimeMessages.length,
-    totalCount: allMessages.length
-  });
+  // Debug controlado (solo cuando cambia el count, no en cada render)
+  const debugRef = useRef({ lastTotal: 0 });
+  if (allMessages.length !== debugRef.current.lastTotal) {
+    console.log('📊 Estado actual de mensajes:', {
+      principalesCount: messages.length,
+      tiempoRealCount: realtimeMessages.length,
+      totalCount: allMessages.length,
+      realtimeIds: realtimeMessages.map(m => m.id),
+      realtimeContents: realtimeMessages.map(m => m.content?.substring(0, 20) + '...')
+    });
+    debugRef.current.lastTotal = allMessages.length;
+  }
 
   // Scroll automático al final cuando se cargan nuevos mensajes
   useEffect(() => {
@@ -263,12 +282,12 @@ const MessageView = ({
       
       console.log(`✅ Mensaje humano enviado en conversación ${conversation.id}`);
       
-      // Actualizar datos después de la acción (con menos delay ya que ya mostramos el mensaje)
+      // El nivel superior manejará la actualización automática, reducir delay
       if (onInterventionAction) {
         console.log('🔄 Ejecutando onInterventionAction...');
         setTimeout(() => {
           onInterventionAction();
-        }, 200); // Delay menor ya que el mensaje ya está visible
+        }, 100); // Delay menor ya que el mensaje ya está visible optimísticamente
         console.log('✅ onInterventionAction programado');
       }
     } catch (error) {
@@ -295,6 +314,27 @@ const MessageView = ({
   const startEditingMessage = (message) => {
     setEditingMessageId(message.id);
     setEditContent(message.content);
+  };
+
+  // 🧪 FUNCIÓN DE TEST TEMPORAL
+  const testAddRealtimeMessage = () => {
+    console.log('🧪 TEST: Agregando mensaje de prueba en tiempo real');
+    const testMessage = {
+      id: `test-${Date.now()}`,
+      content: 'Mensaje de prueba en tiempo real',
+      sender: 'bot',
+      role: 'assistant',
+      created_at: new Date().toISOString(),
+      metadata: { test: true },
+      isRealtime: true
+    };
+    
+    setRealtimeMessages(prev => {
+      console.log('🧪 TEST: Estado previo:', prev.length);
+      const updated = [...prev, testMessage];
+      console.log('🧪 TEST: Estado nuevo:', updated.length);
+      return updated;
+    });
   };
 
   const handleToggleRequireHuman = async () => {
@@ -493,6 +533,18 @@ const MessageView = ({
             >
               {conversation?.requires_human ? '🏁' : '🚨'}
             </button>
+            
+            {/* 🧪 BOTÓN TEMPORAL DE TEST - REMOVER DESPUÉS DE CONFIRMAR QUE FUNCIONA */}
+            {import.meta.env.DEV && (
+              <button
+                className="bot-control-btn"
+                onClick={testAddRealtimeMessage}
+                title="🧪 Test: Agregar mensaje en tiempo real"
+                style={{ backgroundColor: '#e74c3c', color: 'white' }}
+              >
+                🧪
+              </button>
+            )}
           </div>
         </div>
         
