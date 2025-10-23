@@ -3,39 +3,46 @@
  */
 
 .conversation-list {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  background: var(--surface);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .conversation-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  background: #f9fafb;
-  flex-shrink: 0; /* No se encoge */
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-secondary);
+  flex-shrink: 0;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .conversation-header h2 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  word-break: break-word; /* Para texto largo en pantallas pequeñas */
+  margin: 0 0 0.25rem 0;
+  font-size: 1.375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  word-break: break-word;
+  line-height: 1.3;
 }
 
 .conversation-count {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-secondary);
+  line-height: 1.4;
 }
 
 .search-container {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .search-box {
@@ -50,58 +57,139 @@
 
 .search-icon {
   position: absolute;
-  left: 12px;
-  color: #9ca3af;
+  left: 16px;
+  color: var(--text-tertiary);
   z-index: 1;
+  font-size: 1rem;
 }
 
 .search-input {
   width: 100%;
-  padding: 10px 12px 10px 40px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
+  padding: 12px 16px 12px 44px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 24px;
+  font-size: 0.9rem;
+  background: var(--surface-tertiary);
+  /* Removed transition: all 0.2s ease; that was contributing to compression effect */
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  color: var(--text-primary);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #075e54;
-  box-shadow: 0 0 0 3px rgba(7, 94, 84, 0.1);
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.1);
 }
 
 .search-skeleton {
   height: 40px;
-  background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+  background: var(--skeleton-bg);
   background-size: 400% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
 .conversations-container {
   flex: 1;
   overflow-y: auto;
   max-height: calc(100vh - 300px);
+  position: relative;
+}
+
+/* Animación sutil cuando está cargando conversaciones */
+.conversations-container.loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(180deg, transparent 0%, var(--skeleton-base) 20%, transparent 40%),
+    linear-gradient(180deg, transparent 60%, var(--skeleton-base) 80%, transparent 100%);
+  background-size: 100% 200%;
+  animation: gentle-pulse-vertical 4s ease-in-out infinite;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .conversation-item {
   display: flex;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
-  transition: all 0.2s ease;
+  /* Removed transition: all 0.15s ease; that was contributing to compression effect */
+  transition: background-color 0.15s ease;
   gap: 12px;
 }
 
 .conversation-item:hover {
-  background: #f9fafb;
+  background: var(--gray-50);
+}
+
+/* Tema oscuro para hover */
+[data-theme="dark"] .conversation-item:hover {
+  background: var(--gray-800);
+}
+
+[data-theme="dark"] .conversation-item:hover:not(.active) {
+  background: var(--surface-secondary);
 }
 
 .conversation-item.active {
-  background: #eff6ff;
-  border-left: 4px solid #075e54;
-  border-bottom-color: #e0e7ff;
+  background: rgba(34, 197, 94, 0.08);
+  border-right: 3px solid var(--primary);
+  position: relative;
+}
+
+.conversation-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 40px;
+  background: var(--primary);
+  border-radius: 0 4px 4px 0;
+}
+
+/* Tema oscuro para elementos activos */
+[data-theme="dark"] .conversation-item.active {
+  background: rgba(34, 197, 94, 0.12);
+  border-right: 3px solid #22c55e;
+}
+
+[data-theme="dark"] .conversation-item.active::before {
+  background: #22c55e;
+}
+
+.conversation-item.active .conversation-name {
+  color: var(--primary-700) !important;
+}
+
+.conversation-item.active .conversation-preview {
+  color: var(--primary-600) !important;
+}
+
+.conversation-item.active .conversation-time {
+  color: var(--primary-500) !important;
+}
+
+[data-theme="dark"] .conversation-item.active .conversation-name {
+  color: #22c55e !important;
+}
+
+[data-theme="dark"] .conversation-item.active .conversation-preview {
+  color: rgba(34, 197, 94, 0.8) !important;
+}
+
+[data-theme="dark"] .conversation-item.active .conversation-time {
+  color: rgba(34, 197, 94, 0.7) !important;
 }
 
 .conversation-item.loading {
@@ -109,15 +197,22 @@
 }
 
 .conversation-avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: #e5e7eb;
+  background: var(--gray-300);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #6b7280;
+  color: var(--gray-600);
+  font-size: 1.25rem;
+}
+
+/* Tema oscuro para avatar */
+[data-theme="dark"] .conversation-avatar {
+  background: var(--gray-600);
+  color: var(--gray-300);
 }
 
 .conversation-content {
@@ -133,9 +228,9 @@
 }
 
 .conversation-name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #111827;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary) !important;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -146,13 +241,13 @@
 
 .conversation-time {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   flex-shrink: 0;
 }
 
 .conversation-preview {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -161,10 +256,30 @@
 
 .conversation-skeleton {
   height: 60px;
-  background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+  background: var(--skeleton-bg);
   background-size: 400% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: skeleton-appear 0.4s ease-out forwards, shimmer 1.5s ease-in-out infinite;
   border-radius: 8px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.conversation-skeleton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--skeleton-highlight),
+    transparent
+  );
+  animation: shimmer-wave 2s infinite;
 }
 
 .empty-state {
@@ -173,7 +288,7 @@
   align-items: center;
   justify-content: center;
   padding: 3rem 1.5rem;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   text-align: center;
 }
 
@@ -189,43 +304,66 @@
 
 .pagination {
   padding: 1rem 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f9fafb;
+  background: var(--surface-secondary);
 }
 
 .pagination-button {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #075e54;
-  color: white;
+  background: var(--primary-600);
+  color: var(--text-inverse);
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.8rem;
-  transition: all 0.2s ease;
+  /* Removed transition: all 0.2s ease; that was contributing to compression effect */
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .pagination-button:hover:not(:disabled) {
-  background: #064e46;
+  background: var(--primary-700);
   transform: translateY(-1px);
 }
 
 .pagination-button:disabled {
-  background: #d1d5db;
-  color: #9ca3af;
+  background: var(--gray-300);
+  color: var(--text-tertiary);
   cursor: not-allowed;
   transform: none;
 }
 
 .pagination-info {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-weight: 500;
+}
+
+@keyframes skeleton-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gentle-pulse-vertical {
+  0%, 100% {
+    opacity: 0.02;
+    background-position: 0 -200%, 0 200%;
+  }
+  50% {
+    opacity: 0.06;
+    background-position: 0 200%, 0 -200%;
+  }
 }
 
 @keyframes shimmer {
@@ -234,6 +372,15 @@
   }
   100% {
     background-position: -100% 0;
+  }
+}
+
+@keyframes shimmer-wave {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
   }
 }
 
@@ -270,4 +417,96 @@
   .pagination {
     padding: 0.75rem 1rem;
   }
+}
+
+/* ===== INDICADORES SUTILES DE ESTADO EN LISTA (MODO DARK) ===== */
+.name-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.mini-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  min-width: 38px;
+  justify-content: center;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.mini-status-badge:hover {
+  opacity: 1;
+}
+
+.mini-status-badge.automatic {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.mini-status-badge.stopped {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.mini-status-badge.human {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.message-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.urgent-badge {
+  font-size: 10px;
+  flex-shrink: 0;
+  opacity: 0.8;
+  animation: subtleUrgentPulse 2s infinite;
+}
+
+@keyframes subtleUrgentPulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.conversation-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.conversation-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.3;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
 }

@@ -211,4 +211,95 @@ export const deletePrompt = async (promptId) => {
   }
 };
 
+// ===== HUMAN INTERVENTION API =====
+
+/**
+ * Cambiar estado del bot para una conversación
+ * @param {string} conversationId - ID de la conversación
+ * @param {string} status - 'active', 'paused', 'human_takeover'
+ * @param {string} humanId - ID del humano que hace el cambio
+ */
+export const changeBotStatus = async (conversationId, status, humanId = 'dashboard-user') => {
+  try {
+    const response = await api.put(`/conversations/${conversationId}/bot-status`, {
+      status,
+      humanId
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error cambiando estado del bot:', error);
+    throw error;
+  }
+};
+
+/**
+ * Editar un mensaje del bot
+ * @param {string} messageId - ID del mensaje
+ * @param {string} newContent - Nuevo contenido
+ * @param {string} humanId - ID del humano que edita
+ */
+export const editBotMessage = async (messageId, newContent, humanId = 'dashboard-user') => {
+  try {
+    const response = await api.put(`/messages/${messageId}/edit`, {
+      newContent,
+      humanId
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error editando mensaje:', error);
+    throw error;
+  }
+};
+
+/**
+ * Enviar mensaje como humano
+ * @param {string} conversationId - ID de la conversación
+ * @param {string} content - Contenido del mensaje
+ * @param {string} humanId - ID del humano que envía
+ */
+export const sendHumanMessage = async (conversationId, content, humanId = 'dashboard-user') => {
+  try {
+    const response = await api.post(`/conversations/${conversationId}/human-message`, {
+      content,
+      humanId
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error enviando mensaje humano:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtener conversaciones que requieren intervención
+ * @param {string} businessId - ID del negocio
+ */
+export const getConversationsRequiringIntervention = async (businessId) => {
+  try {
+    const response = await api.get('/conversations/requiring-intervention', {
+      params: { businessId }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error obteniendo conversaciones para intervención:', error);
+    throw error;
+  }
+};
+
+/**
+ * Marcar/Quitar marca de intervención humana en una conversación
+ */
+export const setRequireHumanIntervention = async (conversationId, requires = true, reason = 'manual') => {
+  try {
+    const response = await api.put(`/conversations/${conversationId}/require-human`, {
+      requires,
+      reason
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error estableciendo require human:', error);
+    throw error;
+  }
+};
+
 export default api;

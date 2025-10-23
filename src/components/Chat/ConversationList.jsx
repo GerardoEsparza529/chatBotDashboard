@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Search, User, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, User, MessageCircle, ChevronLeft, ChevronRight, Play, Pause, UserX } from 'lucide-react';
 import './ConversationList.css';
 
 const ConversationList = ({ 
@@ -32,34 +32,102 @@ const ConversationList = ({
   const formatTime = (dateString) => {
     if (!dateString) return '';
     
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now - date;
-    
-    // Si es hoy, mostrar hora
-    if (diff < 24 * 60 * 60 * 1000) {
-      return date.toLocaleTimeString('es-ES', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      
+      // Verificar que la fecha sea válida
+      if (isNaN(date.getTime())) return '';
+      
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      // Si es hoy, mostrar hora
+      if (messageDate.getTime() === today.getTime()) {
+        return date.toLocaleTimeString('es-ES', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+      }
+      
+      // Si es ayer
+      if (messageDate.getTime() === yesterday.getTime()) {
+        return 'ayer';
+      }
+      
+      // Si es esta semana (últimos 7 días)
+      const weekAgo = new Date(today);
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      if (messageDate >= weekAgo) {
+        const days = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+        return days[date.getDay()];
+      }
+      
+      // Si es este año, mostrar día/mes
+      if (date.getFullYear() === now.getFullYear()) {
+        return date.toLocaleDateString('es-ES', { 
+          day: '2-digit', 
+          month: '2-digit' 
+        });
+      }
+      
+      // Si es otro año, mostrar día/mes/año
+      return date.toLocaleDateString('es-ES', { 
+        day: '2-digit', 
+        month: '2-digit',
+        year: '2-digit'
       });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
     }
-    
-    // Si es esta semana, mostrar día
-    if (diff < 7 * 24 * 60 * 60 * 1000) {
-      return date.toLocaleDateString('es-ES', { weekday: 'short' });
-    }
-    
-    // Mostrar fecha
-    return date.toLocaleDateString('es-ES', { 
-      day: '2-digit', 
-      month: '2-digit' 
-    });
   };
 
   const getUserName = (conversation) => {
     return conversation?.user?.name || 
            conversation?.user?.phone || 
            'Usuario';
+  };
+
+  const getBotStatusIcon = (status) => {
+    switch (status) {
+      case 'active':
+        return <Play size={10} style={{ color: '#4ade80' }} />;
+      case 'paused':
+        return <Pause size={10} style={{ color: '#fbbf24' }} />;
+      case 'human_takeover':
+        return <UserX size={10} style={{ color: '#f87171' }} />;
+      default:
+        return <Play size={10} style={{ color: '#4ade80' }} />;
+    }
+  };
+
+  const getBotStatusText = (status) => {
+    switch (status) {
+      case 'active':
+        return 'AUTO';
+      case 'paused':
+        return 'STOP';
+      case 'human_takeover':
+        return 'HUMAN';
+      default:
+        return 'AUTO';
+    }
+  };
+
+  const getBotStatusClass = (status) => {
+    switch (status) {
+      case 'active':
+        return 'automatic';
+      case 'paused':
+        return 'stopped';
+      case 'human_takeover':
+        return 'human';
+      default:
+        return 'automatic';
+    }
   };
 
   const getLastMessage = (conversation) => {
@@ -71,6 +139,31 @@ const ConversationList = ({
       ? lastMessage.content.substring(0, 50) + '...'
       : lastMessage.content;
   };
+
+  // Función para obtener la fecha más reciente de una conversación
+  const getConversationDate = (conversation) => {
+    // Priorizar la fecha del último mensaje
+    if (conversation?.messages?.[0]?.created_at) {
+      return new Date(conversation.messages[0].created_at);
+    }
+    // Fallback a updated_at de la conversación
+    if (conversation?.updated_at) {
+      return new Date(conversation.updated_at);
+    }
+    // Fallback a created_at de la conversación
+    if (conversation?.created_at) {
+      return new Date(conversation.created_at);
+    }
+    // Si no hay fecha, usar fecha muy antigua para que aparezca al final
+    return new Date(0);
+  };
+
+  // Ordenar conversaciones por fecha más reciente
+  const sortedConversations = [...conversations].sort((a, b) => {
+    const dateA = getConversationDate(a);
+    const dateB = getConversationDate(b);
+    return dateB - dateA; // Orden descendente (más reciente primero)
+  });
 
   if (loading) {
     return (
@@ -99,7 +192,7 @@ const ConversationList = ({
       <div className="conversation-header">
         <h2>Conversaciones</h2>
         <div className="conversation-count">
-          {conversations.length} conversaciones
+          {sortedConversations.length} conversaciones
         </div>
       </div>
       
@@ -116,14 +209,14 @@ const ConversationList = ({
         </div>
       </div>
       
-      <div className="conversations-container">
-        {conversations.length === 0 ? (
+      <div className={`conversations-container ${loading ? 'loading' : ''}`}>
+        {sortedConversations.length === 0 ? (
           <div className="empty-state">
             <MessageCircle size={48} className="empty-icon" />
             <p>No hay conversaciones</p>
           </div>
         ) : (
-          conversations.map((conversation) => (
+          sortedConversations.map((conversation) => (
             <div
               key={conversation.id}
               className={`conversation-item ${selectedId === conversation.id ? 'active' : ''}`}
@@ -135,17 +228,34 @@ const ConversationList = ({
               
               <div className="conversation-content">
                 <div className="conversation-info">
-                  <h3 className="conversation-name">
-                    {getUserName(conversation)}
-                  </h3>
+                  <div className="name-status-row">
+                    <h3 className="conversation-name">
+                      {getUserName(conversation)}
+                    </h3>
+                    <div className={`mini-status-badge ${getBotStatusClass(conversation.bot_status)}`}>
+                      {getBotStatusIcon(conversation.bot_status)}
+                      <span>{getBotStatusText(conversation.bot_status)}</span>
+                    </div>
+                  </div>
                   <span className="conversation-time">
-                    {formatTime(conversation.updated_at || conversation.messages?.[0]?.created_at)}
+                    {formatTime(
+                      conversation?.messages?.[0]?.created_at || 
+                      conversation?.updated_at || 
+                      conversation?.created_at
+                    )}
                   </span>
                 </div>
                 
-                <p className="conversation-preview">
-                  {getLastMessage(conversation)}
-                </p>
+                <div className="message-row">
+                  <p className="conversation-preview">
+                    {getLastMessage(conversation)}
+                  </p>
+                  {conversation?.requires_human && (
+                    <span className="urgent-badge" title="Requiere intervención humana">
+                      🚨
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))

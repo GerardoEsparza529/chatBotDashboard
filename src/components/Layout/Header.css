@@ -30,7 +30,8 @@
 
 .header-icon {
   color: var(--primary-600);
-  transition: all var(--transition-normal);
+  /* REMOVED: transition: all var(--transition-normal); - Contributing to compression effect */
+  transition: transform var(--transition-normal), color var(--transition-normal);
   filter: drop-shadow(0 2px 4px rgba(14, 165, 233, 0.2));
 }
 
@@ -66,7 +67,8 @@
   background: var(--gray-50);
   border-radius: var(--radius-full);
   border: 1px solid var(--gray-200);
-  transition: all var(--transition-normal);
+  /* REMOVED: transition: all var(--transition-normal); - Contributing to compression effect */
+  transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .header-status:hover {
@@ -79,7 +81,8 @@
   height: 12px;
   border-radius: var(--radius-full);
   position: relative;
-  transition: all var(--transition-normal);
+  /* REMOVED: transition: all var(--transition-normal); - Contributing to compression effect */
+  transition: background-color var(--transition-normal);
 }
 
 .status-indicator::before {
@@ -126,7 +129,8 @@
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-normal);
+  /* REMOVED: transition: all var(--transition-normal); - Contributing to compression effect */
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
@@ -275,10 +279,8 @@
   }
 }
 
-/* === ANIMACIÓN DE ENTRADA === */
-.header {
-  animation: slideInDown 0.6s ease-out;
-}
+/* === ANIMACIÓN DE ENTRADA REMOVIDA === */
+/* REMOVED: .header animation - Contributing to compression effect */
 
 /* === ALTA DENSIDAD DE PÍXELES === */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
@@ -306,7 +308,8 @@
 
 .header-icon {
   color: #10b981;
-  transition: all 0.3s ease;
+  /* REMOVED: transition: all 0.3s ease; - Contributing to compression effect */
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .header-icon:hover {
@@ -337,7 +340,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  transition: all 0.3s ease;
+  /* REMOVED: transition: all 0.3s ease; - Contributing to compression effect */
+  transition: background-color 0.3s ease;
 }
 
 .status-indicator.online {
@@ -368,7 +372,8 @@
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  /* REMOVED: transition: all 0.3s ease; - Contributing to compression effect */
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 2px 4px -1px rgba(59, 130, 246, 0.3);
 }
 

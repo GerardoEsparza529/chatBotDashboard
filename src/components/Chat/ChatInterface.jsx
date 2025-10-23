@@ -9,7 +9,7 @@ import { useConversations } from '../../hooks/useConversations';
 import { useMessages } from '../../hooks/useMessages';
 import './ChatInterface.css';
 
-const ChatInterface = ({ onRefresh }) => {
+const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
   const [selectedConversationId, setSelectedConversationId] = useState(null);
   
   // Hook para manejar conversaciones
@@ -48,6 +48,15 @@ const ChatInterface = ({ onRefresh }) => {
     // setSelectedConversationId(null); 
   };
 
+  // Manejar actualización después de acciones de intervención humana
+  const handleInterventionAction = async () => {
+    // Refrescar tanto conversaciones como mensajes (que incluye la conversación individual)
+    await Promise.all([
+      refreshConversations(),
+      refreshMessages() // Esto también actualiza el objeto conversation individual
+    ]);
+  };
+
   // Manejar refresh general
   const handleRefresh = () => {
     refreshConversations();
@@ -61,7 +70,7 @@ const ChatInterface = ({ onRefresh }) => {
   };
 
   return (
-    <div className={`chat-interface ${(conversationsLoading || messagesLoading) ? 'loading' : ''}`}>
+    <div className={`chat-interface ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* Panel de conversaciones */}
       <div className="chat-panel conversations-panel">
         <ConversationList
@@ -94,6 +103,7 @@ const ChatInterface = ({ onRefresh }) => {
           currentPage={messagesPage}
           totalPages={messagesTotalPages}
           onPageChange={changeMessagesPage}
+          onInterventionAction={handleInterventionAction}
         />
         
         {messagesError && (

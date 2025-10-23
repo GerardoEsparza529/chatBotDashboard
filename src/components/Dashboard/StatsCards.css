@@ -18,7 +18,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  transition: all var(--transition-normal);
+  transition: box-shadow var(--transition-normal), border-color var(--transition-normal), transform var(--transition-normal);
   position: relative;
 }
 
@@ -42,7 +42,7 @@
   justify-content: center;
   flex-shrink: 0;
   position: relative;
-  transition: all var(--transition-normal);
+  transition: color var(--transition-normal);
 }
 
 .stat-icon::before {
@@ -53,7 +53,7 @@
   background: inherit;
   opacity: 0.2;
   filter: blur(8px);
-  transition: all var(--transition-normal);
+  transition: opacity var(--transition-normal), filter var(--transition-normal);
 }
 
 .stat-card:hover .stat-icon {
@@ -111,7 +111,7 @@
   background: var(--gradient-secondary);
   border: 2px solid var(--secondary-300);
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: background var(--transition-normal), border-color var(--transition-normal), transform var(--transition-normal);
   position: relative;
 }
 
@@ -288,7 +288,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
@@ -382,7 +382,7 @@
   background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
   border: 2px solid #ea580c;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .stat-card-action:hover {

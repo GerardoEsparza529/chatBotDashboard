@@ -33,11 +33,12 @@
   border: 1px solid var(--border);
   box-shadow: var(--shadow-subtle);
   overflow: hidden;
-  transition: all var(--transition-normal);
+  /* REMOVED: transition: all var(--transition-normal); - This was causing compression effect */
 }
 
 .chat-section:hover {
   box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition-normal);
 }
 
 /* === RESPONSIVE === */
