@@ -1,15 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from './components/Layout/Sidebar'
 import StatsSection from './components/Sections/StatsSection'
 import ChatSection from './components/Sections/ChatSection'
 import SettingsSection from './components/Sections/SettingsSection'
 import { ThemeProvider } from './contexts/ThemeContext'
+import webSocketService from './services/websocket'
 import './App.css'
 
 function App() {
   const [activeSection, setActiveSection] = useState('chats')
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+
+  // Inicializar WebSocket al cargar la app
+  useEffect(() => {
+    console.log('🚀 Inicializando WebSocket service...');
+    webSocketService.connect();
+
+    // Cleanup al cerrar la app
+    return () => {
+      console.log('🔌 Desconectando WebSocket service...');
+      webSocketService.disconnect();
+    };
+  }, []);
 
   const handleRefresh = () => {
     setIsRefreshing(true)

@@ -5,6 +5,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { User, Bot, Clock, ChevronLeft, ChevronRight, Edit3, Send, Pause, Play, UserX } from 'lucide-react';
 import { changeBotStatus, editBotMessage, sendHumanMessage, setRequireHumanIntervention } from '../../services/api';
+import webSocketService from '../../services/websocket';
 import './MessageView.css';
 
 const MessageView = ({ 
@@ -22,13 +23,106 @@ const MessageView = ({
   const [newMessageContent, setNewMessageContent] = useState('');
   const [isChangingBotStatus, setIsChangingBotStatus] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [realtimeMessages, setRealtimeMessages] = useState([]);
+
+  // 🔌 WebSocket setup for real-time updates
+  useEffect(() => {
+    if (!conversation?.id) return;
+
+    console.log(`🔌 Configurando WebSocket para conversación ${conversation.id}`);
+    
+    // Conectar WebSocket si no está conectado
+    if (!webSocketService.getConnectionStatus().isConnected) {
+      webSocketService.connect();
+    }
+
+    // Unirse a la sala de la conversación
+    webSocketService.joinConversation(conversation.id);
+
+    // Escuchar nuevos mensajes
+    const handleNewMessage = (data) => {
+      console.log('📨 Nuevo mensaje recibido vía WebSocket:', data);
+      
+      if (data.conversationId === conversation.id || data.message?.conversation_id === conversation.id) {
+        // Agregar el nuevo mensaje a la lista de mensajes en tiempo real
+        setRealtimeMessages(prev => {
+          // Evitar mensajes duplicados
+          const exists = prev.some(msg => 
+            msg.id === data.message?.id || 
+            (msg.content === data.message?.content && Math.abs(new Date(msg.timestamp) - new Date(data.message?.timestamp)) < 1000)
+          );
+          
+          if (!exists) {
+            console.log('✅ Agregando mensaje en tiempo real');
+            return [...prev, {
+              id: data.message?.id || `realtime-${Date.now()}`,
+              content: data.message?.content || data.message?.message_content,
+              sender: data.message?.sender || (data.message?.from_user ? 'user' : 'bot'),
+              role: data.message?.role || (data.message?.from_user ? 'user' : 'assistant'),
+              created_at: data.message?.timestamp || data.message?.created_at || new Date().toISOString(),
+              metadata: data.message?.metadata || {},
+              isRealtime: true
+            }];
+          }
+          
+          return prev;
+        });
+
+        // Trigger intervention action para actualizar el estado general
+        if (onInterventionAction) {
+          setTimeout(onInterventionAction, 500);
+        }
+      }
+    };
+
+    // Escuchar cambios de estado del bot
+    const handleBotStatusChange = (data) => {
+      console.log('🤖 Cambio de estado del bot vía WebSocket:', data);
+      
+      if (data.conversationId === conversation.id) {
+        // Trigger intervention action para actualizar el estado
+        if (onInterventionAction) {
+          setTimeout(onInterventionAction, 100);
+        }
+      }
+    };
+
+    webSocketService.onNewMessage(handleNewMessage);
+    webSocketService.onBotStatusChange(handleBotStatusChange);
+
+    // Cleanup al desmontar o cambiar conversación
+    return () => {
+      console.log(`🔌 Limpiando WebSocket para conversación ${conversation.id}`);
+      webSocketService.leaveConversation(conversation.id);
+      setRealtimeMessages([]); // Limpiar mensajes en tiempo real
+    };
+  }, [conversation?.id, onInterventionAction]);
+
+  // Limpiar mensajes en tiempo real cuando cambian los mensajes principales
+  useEffect(() => {
+    setRealtimeMessages([]);
+  }, [messages]);
+
+  // Combinar mensajes principales con mensajes en tiempo real
+  const allMessages = [...messages, ...realtimeMessages].sort((a, b) => 
+    new Date(a.created_at) - new Date(b.created_at)
+  );
 
   // Scroll automático al final cuando se cargan nuevos mensajes
   useEffect(() => {
-    if (messages.length > 0 && currentPage === 1) {
+    if (allMessages.length > 0 && currentPage === 1) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, currentPage]);
+  }, [allMessages.length, currentPage]);
+
+  // Scroll adicional para mensajes en tiempo real
+  useEffect(() => {
+    if (realtimeMessages.length > 0) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [realtimeMessages.length]);
 
   const formatTime = (dateString) => {
     if (!dateString) return '';
@@ -369,14 +463,14 @@ const MessageView = ({
               ></div>
             ))}
           </div>
-        ) : messages.length === 0 ? (
+        ) : allMessages.length === 0 ? (
           <div className="empty-messages">
             <Clock size={48} className="empty-icon" />
             <p>No hay mensajes en esta conversación</p>
           </div>
         ) : (
           <>
-            {messages.map((message, index) => (
+            {allMessages.map((message, index) => (
               <div
                 key={`${message.id || index}`}
                 className={`message ${message.sender}`}
