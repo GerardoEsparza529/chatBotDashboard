@@ -18,12 +18,14 @@ const MessageView = ({
   onInterventionAction
 }) => {
   const messagesEndRef = useRef(null);
+  const unreadDividerRef = useRef(null);
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editContent, setEditContent] = useState('');
   const [newMessageContent, setNewMessageContent] = useState('');
   const [isChangingBotStatus, setIsChangingBotStatus] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [realtimeMessages, setRealtimeMessages] = useState([]);
+  const [hasScrolledToUnread, setHasScrolledToUnread] = useState(false);
 
   // 🔌 WebSocket setup for real-time updates
   useEffect(() => {
@@ -44,6 +46,7 @@ const MessageView = ({
       console.log(`🔌 Limpiando WebSocket para conversación ${conversation.id}`);
       webSocketService.leaveConversation(conversation.id);
       setRealtimeMessages([]); // Limpiar mensajes en tiempo real
+      setHasScrolledToUnread(false); // Reset scroll state
     };
   }, [conversation?.id]); // Removido onInterventionAction de las dependencias
 
@@ -152,6 +155,33 @@ const MessageView = ({
     new Date(a.created_at) - new Date(b.created_at)
   );
 
+  // Encontrar el índice donde insertar el divisor de "mensajes sin leer"
+  const getUnreadDividerIndex = () => {
+    if (!conversation?.last_read_at || allMessages.length === 0) {
+      return -1; // No mostrar divisor si no hay fecha de lectura o no hay mensajes
+    }
+    
+    const lastReadDate = new Date(conversation.last_read_at);
+    console.log(`🔍 Buscando mensajes sin leer desde: ${lastReadDate.toLocaleString()}`);
+    
+    // Encontrar el primer mensaje después de la fecha de última lectura
+    const unreadIndex = allMessages.findIndex((message, index) => {
+      const messageDate = new Date(message.created_at);
+      const isAfterLastRead = messageDate > lastReadDate;
+      
+      if (isAfterLastRead) {
+        console.log(`📝 Mensaje sin leer encontrado en índice ${index}: ${message.content?.substring(0, 30)}... (${messageDate.toLocaleString()})`);
+      }
+      
+      return isAfterLastRead;
+    });
+    
+    console.log(`📊 Índice del divisor: ${unreadIndex} (${unreadIndex === -1 ? 'Sin mensajes sin leer' : 'Hay mensajes sin leer'})`);
+    return unreadIndex;
+  };
+
+  const unreadDividerIndex = getUnreadDividerIndex();
+
   // Debug controlado (solo cuando cambia el count, no en cada render)
   const debugRef = useRef({ lastTotal: 0 });
   if (allMessages.length !== debugRef.current.lastTotal) {
@@ -172,14 +202,49 @@ const MessageView = ({
     }
   }, [allMessages.length, currentPage]);
 
-  // Scroll adicional para mensajes en tiempo real
+  // 📖 Scroll inteligente: posicionar en último mensaje leído al abrir conversación
   useEffect(() => {
-    if (realtimeMessages.length > 0) {
+    if (!hasScrolledToUnread && allMessages.length > 0 && conversation?.id && unreadDividerIndex > -1) {
+      console.log(`📖 Posicionando en último mensaje leído para conversación ${conversation.id}`);
+      console.log(`🔍 Divisor en índice: ${unreadDividerIndex}, total mensajes: ${allMessages.length}`);
+      
+      setTimeout(() => {
+        if (unreadDividerRef.current) {
+          unreadDividerRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+          console.log('✅ Scroll realizado al divisor de mensajes sin leer');
+          setHasScrolledToUnread(true);
+        }
+      }, 300); // Delay para asegurar que el DOM esté renderizado
+    } else if (!hasScrolledToUnread && allMessages.length > 0 && conversation?.id && unreadDividerIndex === -1) {
+      // Si no hay mensajes sin leer, hacer scroll al final
+      console.log(`📖 No hay mensajes sin leer, posicionando al final`);
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+        setHasScrolledToUnread(true);
+      }, 300);
     }
-  }, [realtimeMessages.length]);
+  }, [allMessages.length, conversation?.id, unreadDividerIndex, hasScrolledToUnread]);
+
+  // Scroll adicional para mensajes en tiempo real (solo si está al final)
+  useEffect(() => {
+    if (realtimeMessages.length > 0 && hasScrolledToUnread) {
+      // Solo hacer scroll automático si el usuario está cerca del final
+      const container = messagesEndRef.current?.parentElement?.parentElement;
+      if (container) {
+        const isNearBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 100;
+        if (isNearBottom) {
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        } else {
+          console.log('🔄 Usuario no está al final, no haciendo scroll automático para mensajes nuevos');
+        }
+      }
+    }
+  }, [realtimeMessages.length, hasScrolledToUnread]);
 
   const formatTime = (dateString) => {
     if (!dateString) return '';
@@ -597,17 +662,28 @@ const MessageView = ({
         ) : (
           <>
             {allMessages.map((message, index) => (
-              <div
-                key={`${message.id || index}`}
-                className={`message ${message.sender}`}
-              >
-                <div className="message-avatar">
-                  {message.sender === 'user' ? (
-                    <User size={16} />
-                  ) : (
-                    <Bot size={16} />
-                  )}
-                </div>
+              <div key={`message-wrapper-${message.id || index}`}>
+                {/* Mostrar divisor de mensajes sin leer */}
+                {unreadDividerIndex === index && (
+                  <div className="unread-divider" ref={unreadDividerRef}>
+                    <div className="unread-divider-line"></div>
+                    <span className="unread-divider-text">Mensajes sin leer</span>
+                    <div className="unread-divider-line"></div>
+                  </div>
+                )}
+                
+                <div
+                  className={`message ${message.sender} ${
+                    unreadDividerIndex > -1 && index >= unreadDividerIndex ? 'unread-message' : ''
+                  }`}
+                >
+                  <div className="message-avatar">
+                    {message.sender === 'user' ? (
+                      <User size={16} />
+                    ) : (
+                      <Bot size={16} />
+                    )}
+                  </div>
                 
                 <div className="message-content">
                   {editingMessageId === message.id ? (
@@ -673,6 +749,7 @@ const MessageView = ({
                   )}
                 </div>
               </div>
+            </div>
             ))}
             <div ref={messagesEndRef} />
           </>

@@ -300,6 +300,63 @@
   opacity: 0.5;
 }
 
+/* Divisor de mensajes sin leer */
+.unread-divider {
+  display: flex;
+  align-items: center;
+  margin: 16px 20px;
+  gap: 12px;
+}
+
+.unread-divider-line {
+  flex: 1;
+  height: 1px;
+  background: #25d366; /* Verde WhatsApp */
+  opacity: 0.6;
+}
+
+.unread-divider-text {
+  background: #25d366; /* Verde WhatsApp */
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 3px rgba(37, 211, 102, 0.3);
+}
+
+/* Resaltado sutil para mensajes sin leer */
+.message.unread-message {
+  position: relative;
+}
+
+.message.unread-message::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #25d366, transparent);
+  border-radius: 2px;
+  opacity: 0.6;
+  animation: fadeInUnread 0.5s ease-out;
+}
+
+@keyframes fadeInUnread {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 0.6;
+    transform: scaleY(1);
+  }
+}
+
 .empty-conversation h3 {
   margin: 0 0 0.5rem 0;
   color: var(--text-secondary);

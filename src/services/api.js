@@ -303,4 +303,18 @@ export const setRequireHumanIntervention = async (conversationId, requires = tru
   }
 };
 
+/**
+ * Marcar conversación como leída
+ * @param {string} conversationId - ID de la conversación
+ */
+export const markConversationAsRead = async (conversationId) => {
+  try {
+    const response = await api.put(`/conversations/${conversationId}/mark-read`);
+    return response.data;
+  } catch (error) {
+    console.error('Error marcando conversación como leída:', error);
+    throw error;
+  }
+};
+
 export default api;

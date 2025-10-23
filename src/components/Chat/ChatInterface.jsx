@@ -7,6 +7,7 @@ import ConversationList from './ConversationList';
 import MessageView from './MessageView';
 import { useConversations } from '../../hooks/useConversations';
 import { useMessages } from '../../hooks/useMessages';
+import { markConversationAsRead } from '../../services/api';
 import webSocketService from '../../services/websocket';
 import './ChatInterface.css';
 
@@ -38,8 +39,23 @@ const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
   } = useMessages(selectedConversationId);
 
   // Manejar selección de conversación
-  const handleSelectConversation = (conversationId) => {
+  const handleSelectConversation = async (conversationId) => {
+    console.log(`📖 Seleccionando conversación: ${conversationId}`);
     setSelectedConversationId(conversationId);
+    
+    // Marcar conversación como leída
+    try {
+      await markConversationAsRead(conversationId);
+      console.log(`✅ Conversación ${conversationId} marcada como leída`);
+      
+      // Actualizar lista de conversaciones para reflejar el cambio
+      setTimeout(() => {
+        refreshConversations();
+      }, 100);
+    } catch (error) {
+      console.error('❌ Error marcando conversación como leída:', error);
+      // No bloquear la UI por este error
+    }
   };
 
   // Manejar búsqueda
@@ -100,9 +116,9 @@ const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
             console.log('✅ [GLOBAL] Lista de conversaciones actualizada exitosamente');
           })
           .catch((error) => {
-            console.error('❌ [GLOBAL] Error actualizando conversaciones:', error);
+            console.error('❌ [GLOBAL] Error actualizando lista de conversaciones:', error);
           });
-      }, 100); // Reducir delay
+      }, 100); // Reducido delay
       
       // Si el mensaje es de la conversación actualmente seleccionada, también refrescar mensajes
       if (selectedConversationId && 
@@ -120,6 +136,22 @@ const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
             });
         }, 200);
       }
+    };
+
+    // Escuchar eventos globales de conversación actualizada
+    const handleConversationUpdated = (data) => {
+      console.log('🌍 [GLOBAL] Conversación actualizada:', data);
+      console.log('🔄 [GLOBAL] Refrescando lista de conversaciones por conversation-updated...');
+      
+      setTimeout(() => {
+        refreshConversations()
+          .then(() => {
+            console.log('✅ [GLOBAL] Lista actualizada por conversation-updated');
+          })
+          .catch((error) => {
+            console.error('❌ [GLOBAL] Error en conversation-updated:', error);
+          });
+      }, 50); // Delay muy corto para actualizaciones rápidas
     };
 
     // Escuchar cambios de estado del bot
@@ -150,6 +182,7 @@ const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
 
     webSocketService.onNewMessage(handleGlobalNewMessage);
     webSocketService.onBotStatusChange(handleGlobalBotStatusChange);
+    webSocketService.onConversationUpdated(handleConversationUpdated);
 
     // Cleanup
     return () => {

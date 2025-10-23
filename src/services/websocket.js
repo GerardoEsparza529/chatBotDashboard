@@ -174,6 +174,25 @@ class WebSocketService {
     }
   }
 
+  // Escuchar eventos globales de conversación actualizada
+  onConversationUpdated(callback) {
+    // Remover listeners anteriores para evitar duplicados
+    if (this.apiSocket) {
+      this.apiSocket.off('conversation-updated');
+      this.apiSocket.on('conversation-updated', (data) => {
+        console.log('🌍 Conversación actualizada desde API:', data);
+        callback(data);
+      });
+    }
+    if (this.botSocket) {
+      this.botSocket.off('conversation-updated');
+      this.botSocket.on('conversation-updated', (data) => {
+        console.log('🌍 Conversación actualizada desde Bot Service:', data);
+        callback(data);
+      });
+    }
+  }
+
   // Remover todos los listeners
   removeAllListeners() {
     if (this.apiSocket) {

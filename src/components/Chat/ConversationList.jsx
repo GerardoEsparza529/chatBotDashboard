@@ -269,11 +269,18 @@ const ConversationList = ({
                   <p className="conversation-preview">
                     {getLastMessage(conversation)}
                   </p>
-                  {conversation?.requires_human && (
-                    <span className="urgent-badge" title="Requiere intervención humana">
-                      🚨
-                    </span>
-                  )}
+                  <div className="conversation-badges">
+                    {conversation?.requires_human && (
+                      <span className="urgent-badge" title="Requiere intervención humana">
+                        🚨
+                      </span>
+                    )}
+                    {conversation?.unread_count > 0 && (
+                      <span className="unread-badge" title={`${conversation.unread_count} mensajes sin leer`}>
+                        {conversation.unread_count > 99 ? '99+' : conversation.unread_count}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
