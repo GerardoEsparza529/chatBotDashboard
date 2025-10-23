@@ -5,7 +5,8 @@
 import axios from 'axios';
 
 // URL base del API del bot - configurable via variables de entorno
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+const API_SERVER_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const BASE_URL = API_SERVER_URL.endsWith('/api') ? API_SERVER_URL : `${API_SERVER_URL}/api`;
 const API_TIMEOUT = import.meta.env.VITE_API_TIMEOUT || 10000;
 const DEBUG_MODE = import.meta.env.VITE_DEBUG === 'true';
 
