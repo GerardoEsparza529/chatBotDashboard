@@ -3,6 +3,8 @@
  */
 
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChartBar, faSyncAlt, faWrench } from '@fortawesome/free-solid-svg-icons';
 import PromptManager from '../Dashboard/PromptManager';
 import './SettingsSection.css';
 
@@ -36,7 +38,7 @@ const SettingsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
           </div>
 
           <div className="setting-card">
-            <div className="setting-icon">📊</div>
+            <FontAwesomeIcon icon={faChartBar} className="setting-icon" />
             <div className="setting-info">
               <h3>Análisis de Rendimiento</h3>
               <p>Próximamente disponible</p>
@@ -45,7 +47,7 @@ const SettingsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
           </div>
 
           <div className="setting-card">
-            <div className="setting-icon">🔧</div>
+            <FontAwesomeIcon icon={faWrench} className="setting-icon" />
             <div className="setting-info">
               <h3>Configuración Avanzada</h3>
               <p>Próximamente disponible</p>
@@ -54,7 +56,7 @@ const SettingsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
           </div>
 
           <div className="setting-card">
-            <div className="setting-icon">🔄</div>
+            <FontAwesomeIcon icon={faSyncAlt} className="setting-icon" />
             <div className="setting-info">
               <h3>Actualizar Sistema</h3>
               <p>Refrescar configuración y datos</p>

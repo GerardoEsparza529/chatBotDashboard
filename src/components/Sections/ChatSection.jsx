@@ -5,7 +5,7 @@
 import ChatInterface from '../Chat/ChatInterface';
 import './ChatSection.css';
 
-const ChatSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
+const ChatSection = ({ isRefreshing, onRefresh, isSidebarCollapsed, onConversationSelect }) => {
   return (
     <div className="chat-section">
       <div className="chat-header">
@@ -18,6 +18,7 @@ const ChatSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
           isRefreshing={isRefreshing} 
           onRefresh={onRefresh} 
           isSidebarCollapsed={isSidebarCollapsed}
+          onConversationSelect={onConversationSelect}
         />
       </div>
     </div>

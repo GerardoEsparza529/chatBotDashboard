@@ -1,0 +1,138 @@
+/**
+ * Estilos para BottomNavBar - Navegación móvil estilo iOS WhatsApp
+ */
+
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface-glass); /* Usar variable global para superficie de vidrio */
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-top: 0.5px solid var(--border); /* Usar variable global para bordes */
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
+  display: none;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Mostrar solo en móvil */
+@media (max-width: 768px) {
+  .bottom-nav-bar {
+    display: block;
+  }
+}
+
+.bottom-nav-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0 8px 0; /* Más padding vertical */
+  max-width: 100%;
+}
+
+.bottom-nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: var(--text-secondary); /* Usar variable global para texto secundario */
+  font-size: 10px;
+  font-weight: 500;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+.bottom-nav-tab:active {
+  transform: scale(0.92);
+}
+
+.bottom-nav-tab.active {
+  color: var(--primary); /* Usar variable global para color primario */
+}
+
+/* Animación de activación */
+.bottom-nav-tab.active::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: var(--primary); /* Usar variable global para color primario */
+  border-radius: 1px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.bottom-nav-icon {
+  font-size: 24px; /* Un poco más grande */
+  margin-bottom: 3px; /* Más espacio */
+  line-height: 1;
+  transition: all 0.25s ease;
+}
+
+.bottom-nav-tab.active .bottom-nav-icon {
+  transform: scale(1.15); /* Icono más grande cuando está activo */
+}
+
+.bottom-nav-label {
+  font-size: 11px; /* Un poco más grande */
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 1px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70px; /* Más ancho */
+}
+
+/* Efectos de hover para desktop (no aplicar en móvil) */
+@media (min-width: 769px) {
+  .bottom-nav-tab:hover {
+    color: var(--primary); /* Usar variable global para color primario */
+    transform: translateY(-1px);
+  }
+}
+
+/* Animaciones suaves */
+.bottom-nav-tab {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ajustes para iPhone X+ con notch */
+@supports (padding: max(0px)) {
+  .bottom-nav-bar {
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+}

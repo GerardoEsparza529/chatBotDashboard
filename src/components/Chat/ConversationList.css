@@ -1,5 +1,5 @@
 /**
- * Estilos para la lista de conversaciones
+ * Estilos para la lista de conversaciones - WhatsApp Web/iOS
  */
 
 .conversation-list {
@@ -13,6 +13,15 @@
   box-shadow: none;
 }
 
+/* === RESPONSIVE MÓVIL - WhatsApp iOS Style === */
+@media (max-width: 768px) {
+  .conversation-list {
+    background: var(--background); /* Usar variable global en lugar de color hardcodeado */
+    height: 100vh;
+    width: 100vw;
+  }
+}
+
 .conversation-header {
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border);
@@ -24,6 +33,16 @@
   justify-content: center;
 }
 
+/* Conversation header responsive para móvil */
+@media (max-width: 768px) {
+  .conversation-header {
+    background: var(--surface-secondary); /* Usar variable global */
+    padding: 16px 20px;
+    min-height: 60px;
+    border-bottom: 1px solid var(--border); /* Usar variable global */
+  }
+}
+
 .conversation-header h2 {
   margin: 0 0 0.25rem 0;
   font-size: 1.375rem;
@@ -33,16 +52,42 @@
   line-height: 1.3;
 }
 
+/* Conversation header h2 responsive para móvil */
+@media (max-width: 768px) {
+  .conversation-header h2 {
+    color: var(--text-primary); /* Usar variable global */
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
 .conversation-count {
   font-size: 0.875rem;
   color: var(--text-secondary);
   line-height: 1.4;
 }
 
+/* Conversation count responsive para móvil */
+@media (max-width: 768px) {
+  .conversation-count {
+    color: var(--text-secondary); /* Usar variable global */
+    font-size: 0.8rem;
+  }
+}
+
 .search-container {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
+}
+
+/* Search container responsive para móvil */
+@media (max-width: 768px) {
+  .search-container {
+    background: var(--surface-secondary); /* Usar variable global */
+    border-bottom: 1px solid var(--border); /* Usar variable global */
+    padding: 12px 16px;
+  }
 }
 
 .search-box {
@@ -75,6 +120,20 @@
   color: var(--text-primary);
 }
 
+/* Search input responsive para móvil */
+@media (max-width: 768px) {
+  .search-input {
+    background: var(--surface-secondary); /* Usar variable global */
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: 10px; /* Border radius iOS */
+  }
+  
+  .search-input::placeholder {
+    color: var(--text-secondary); /* Usar variable global */
+  }
+}
+
 .search-input:focus {
   outline: none;
   border-color: var(--primary);
@@ -96,6 +155,15 @@
   overflow-y: auto;
   max-height: calc(100vh - 300px);
   position: relative;
+}
+
+/* Conversations container responsive para móvil */
+@media (max-width: 768px) {
+  .conversations-container {
+    background: var(--background); /* Usar variable global */
+    max-height: calc(100vh - 140px); /* Ajustar para header y search */
+    -webkit-overflow-scrolling: touch; /* Scroll suave iOS */
+  }
 }
 
 /* Animación sutil cuando está cargando conversaciones */
@@ -125,6 +193,28 @@
   /* Removed transition: all 0.15s ease; that was contributing to compression effect */
   transition: background-color 0.15s ease;
   gap: 12px;
+}
+
+/* Conversation item responsive para móvil */
+@media (max-width: 768px) {
+  .conversation-item {
+    border-bottom: 1px solid var(--border); /* Usar variable global */
+    background: var(--background); /* Usar variable global */
+    padding: 16px 20px; /* Más padding en móvil */
+  }
+  
+  .conversation-item:hover {
+    background: var(--surface-hover); /* Usar variable global */
+  }
+  
+  .conversation-item.active {
+    background: var(--surface-selected); /* Usar variable global */
+    border-right: none;
+  }
+  
+  .conversation-item.active::before {
+    display: none; /* Sin indicador lateral en móvil */
+  }
 }
 
 .conversation-item:hover {
@@ -239,10 +329,35 @@
   margin-right: 8px;
 }
 
+/* Conversation name responsive para móvil */
+@media (max-width: 768px) {
+  .conversation-name {
+    color: var(--text-primary) !important; /* Usar variable global */
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+  .conversation-item.active .conversation-name {
+    color: var(--text-primary) !important; /* Usar variable global */
+  }
+}
+
 .conversation-time {
   font-size: 0.75rem;
   color: var(--text-tertiary);
   flex-shrink: 0;
+}
+
+/* Conversation time responsive para móvil */
+@media (max-width: 768px) {
+  .conversation-time {
+    color: var(--text-secondary); /* Usar variable global */
+    font-size: 0.85rem;
+  }
+  
+  .conversation-item.active .conversation-time {
+    color: var(--text-secondary) !important; /* Usar variable global */
+  }
 }
 
 .conversation-preview {
@@ -252,6 +367,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Conversation preview responsive para móvil */
+@media (max-width: 768px) {
+  .conversation-preview {
+    color: var(--text-secondary); /* Usar variable global */
+    font-size: 0.9rem;
+  }
+  
+  .conversation-item.active .conversation-preview {
+    color: var(--text-secondary) !important; /* Usar variable global */
+  }
 }
 
 .conversation-skeleton {

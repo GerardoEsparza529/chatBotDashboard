@@ -4,6 +4,8 @@
 
 import { useState, useEffect } from 'react';
 import { Search, User, MessageCircle, ChevronLeft, ChevronRight, Play, Pause, UserX } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import './ConversationList.css';
 
 const ConversationList = ({ 
@@ -209,7 +211,7 @@ const ConversationList = ({
               }}
               title="🧪 Test: Reload page"
             >
-              🔄
+              <FontAwesomeIcon icon={faSyncAlt} />
             </button>
           )}
         </div>

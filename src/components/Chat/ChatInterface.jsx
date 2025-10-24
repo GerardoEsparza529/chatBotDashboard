@@ -3,16 +3,38 @@
  */
 
 import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import ConversationList from './ConversationList';
 import MessageView from './MessageView';
+import MobileConversationList from './MobileConversationList';
+import MobileMessageView from './MobileMessageView';
 import { useConversations } from '../../hooks/useConversations';
 import { useMessages } from '../../hooks/useMessages';
 import { markConversationAsRead } from '../../services/api';
 import webSocketService from '../../services/websocket';
 import './ChatInterface.css';
 
-const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
+const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed, onConversationSelect }) => {
   const [selectedConversationId, setSelectedConversationId] = useState(null);
+  const [showMessages, setShowMessages] = useState(false); // Para navegación móvil
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+  // Detectar cambios de tamaño de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      
+      // En desktop, mostrar siempre ambos paneles
+      if (!mobile) {
+        setShowMessages(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Hook para manejar conversaciones
   const {
@@ -38,10 +60,31 @@ const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
     refresh: refreshMessages
   } = useMessages(selectedConversationId);
 
+  // Manejar vuelta a la lista de conversaciones (móvil)
+  const handleBackToConversations = () => {
+    if (isMobile) {
+      setShowMessages(false);
+      setSelectedConversationId(null);
+      // Notificar al componente padre que no hay conversación seleccionada
+      if (onConversationSelect) {
+        onConversationSelect(null);
+      }
+    }
+  };
+
   // Manejar selección de conversación
   const handleSelectConversation = async (conversationId) => {
     console.log(`📖 Seleccionando conversación: ${conversationId}`);
     setSelectedConversationId(conversationId);
+    
+    // En móvil, mostrar panel de mensajes
+    if (isMobile) {
+      setShowMessages(true);
+      // Notificar al componente padre que hay conversación seleccionada
+      if (onConversationSelect) {
+        onConversationSelect(conversationId);
+      }
+    }
     
     // Marcar conversación como leída
     try {
@@ -203,7 +246,7 @@ const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
   };
 
   return (
-    <div className={`chat-interface ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+    <div className={`chat-interface ${isSidebarCollapsed ? 'sidebar-collapsed' : ''} ${showMessages ? 'show-messages' : ''}`}>
       {/* 🧪 BOTÓN TEMPORAL DE TEST GLOBAL - SOLO EN DESARROLLO */}
       {window.location.hostname === 'localhost' && (
         <div style={{ 
@@ -226,50 +269,107 @@ const ChatInterface = ({ onRefresh, isRefreshing, isSidebarCollapsed }) => {
         </div>
       )}
       
-      {/* Panel de conversaciones */}
-      <div className="chat-panel conversations-panel">
-        <ConversationList
-          conversations={conversations}
-          loading={conversationsLoading}
-          selectedId={selectedConversationId}
-          onSelect={handleSelectConversation}
-          onSearch={handleSearch}
-          currentPage={conversationsPage}
-          totalPages={conversationsTotalPages}
-          onPageChange={changeConversationsPage}
-        />
-        
-        {conversationsError && (
-          <div className="error-message">
-            <p>❌ Error cargando conversaciones: {conversationsError}</p>
-            <button onClick={refreshConversations} className="retry-button">
-              🔄 Reintentar
-            </button>
+      {/* Renderizado condicional para móvil vs desktop */}
+      {isMobile ? (
+        // === VERSIÓN MÓVIL ===
+        showMessages ? (
+          // Mostrar vista de mensajes en móvil
+          <MobileMessageView
+            conversation={conversation}
+            messages={messages}
+            loading={messagesLoading}
+            onBackToConversations={handleBackToConversations}
+            onInterventionAction={handleInterventionAction}
+            currentPage={messagesPage}
+            totalPages={messagesTotalPages}
+            onPageChange={changeMessagesPage}
+          />
+        ) : (
+          // Mostrar lista de conversaciones en móvil
+          <MobileConversationList
+            conversations={conversations}
+            loading={conversationsLoading}
+            selectedId={selectedConversationId}
+            onSelect={handleSelectConversation}
+            onSearch={handleSearch}
+            currentPage={conversationsPage}
+            totalPages={conversationsTotalPages}
+            onPageChange={changeConversationsPage}
+          />
+        )
+      ) : (
+        // === VERSIÓN DESKTOP ===
+        <>
+          {/* Panel de conversaciones */}
+          <div className="chat-panel conversations-panel">
+            <ConversationList
+              conversations={conversations}
+              loading={conversationsLoading}
+              selectedId={selectedConversationId}
+              onSelect={handleSelectConversation}
+              onSearch={handleSearch}
+              currentPage={conversationsPage}
+              totalPages={conversationsTotalPages}
+              onPageChange={changeConversationsPage}
+            />
+            
+            {conversationsError && (
+              <div className="error-message">
+                <p>❌ Error cargando conversaciones: {conversationsError}</p>
+                <button onClick={refreshConversations} className="retry-button">
+                  <FontAwesomeIcon icon={faSyncAlt} /> Reintentar
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* Panel de mensajes */}
-      <div className="chat-panel messages-panel">
-        <MessageView
-          conversation={conversation}
-          messages={messages}
-          loading={messagesLoading}
-          currentPage={messagesPage}
-          totalPages={messagesTotalPages}
-          onPageChange={changeMessagesPage}
-          onInterventionAction={handleInterventionAction}
-        />
-        
-        {messagesError && (
-          <div className="error-message">
-            <p>❌ Error cargando mensajes: {messagesError}</p>
-            <button onClick={refreshMessages} className="retry-button">
-              🔄 Reintentar
-            </button>
+          {/* Panel de mensajes */}
+          <div className="chat-panel messages-panel">
+            <MessageView
+              conversation={conversation}
+              messages={messages}
+              loading={messagesLoading}
+              currentPage={messagesPage}
+              totalPages={messagesTotalPages}
+              onPageChange={changeMessagesPage}
+              onInterventionAction={handleInterventionAction}
+              onBackToConversations={handleBackToConversations}
+              isMobile={isMobile}
+            />
+            
+            {messagesError && (
+              <div className="error-message">
+                <p>❌ Error cargando mensajes: {messagesError}</p>
+                <button onClick={refreshMessages} className="retry-button">
+                  <FontAwesomeIcon icon={faSyncAlt} /> Reintentar
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
+      
+      {/* Mostrar errores en móvil */}
+      {isMobile && (conversationsError || messagesError) && (
+        <div className="mobile-error-overlay">
+          {conversationsError && (
+            <div className="mobile-error-message">
+              <p>❌ Error cargando conversaciones: {conversationsError}</p>
+              <button onClick={refreshConversations} className="mobile-retry-button">
+                <FontAwesomeIcon icon={faSyncAlt} /> Reintentar
+              </button>
+            </div>
+          )}
+          {messagesError && (
+            <div className="mobile-error-message">
+              <p>❌ Error cargando mensajes: {messagesError}</p>
+              <button onClick={refreshMessages} className="mobile-retry-button">
+                <FontAwesomeIcon icon={faSyncAlt} /> Reintentar
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

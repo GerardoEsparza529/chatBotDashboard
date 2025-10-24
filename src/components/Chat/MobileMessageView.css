@@ -1,0 +1,1226 @@
+﻿
+/**
+ * Estilos para MobileMessageView - Vista de mensajes mÃ³vil estilo iOS WhatsApp
+ * Usando variables CSS globales para tema claro/oscuro
+ */
+
+.mobile-message-view {
+  background: var(--background); /* Usa variable global del tema */
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Header */
+.mobile-header {
+  background: var(--surface-secondary); /* Variable global para superficie secundaria */
+  padding: 8px 16px;
+  padding-top: max(8px, env(safe-area-inset-top, 8px));
+  border-bottom: 0.5px solid var(--border); /* Variable global para bordes */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 88px;
+  z-index: 10;
+  position: relative;
+}
+
+.mobile-back-button {
+  background: none;
+  border: none;
+  color: #007aff; /* Azul iOS */
+  cursor: pointer;
+  padding: 8px;
+  margin: -8px;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.mobile-back-button:active {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.mobile-back-icon {
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.mobile-contact-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-left: 4px;
+}
+
+.mobile-contact-name {
+  color: var(--text-primary); /* Variable global para texto primario */
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.mobile-contact-status {
+  color: var(--text-tertiary); /* Variable global para texto terciario */
+  font-size: 13px;
+  font-weight: 400;
+  margin: 1px 0 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-actions-button {
+  background: none;
+  border: none;
+  color: #007aff;
+  cursor: pointer;
+  padding: 8px;
+  margin: -8px;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.mobile-actions-button:active {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.mobile-actions-icon {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Actions Menu */
+.mobile-actions-menu {
+  position: absolute;
+  top: 80px;
+  right: 16px;
+  background: var(--surface); /* Variable global para superficie */
+  border-radius: 16px; /* Más redondeado */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08); /* Sombra más elegante */
+  z-index: 20;
+  overflow: hidden;
+  border: 0.5px solid var(--border); /* Variable global para bordes */
+  min-width: 240px; /* Más compacto */
+  max-height: 400px;
+  overflow-y: auto;
+  backdrop-filter: blur(20px); /* Efecto blur moderno */
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Ãrea de mensajes */
+.mobile-messages-container {
+  flex: 1;
+  background: var(--chat-bg); /* Variable global para fondo del chat */
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.mobile-messages-list {
+  height: 100%;
+  overflow-y: auto;
+  padding: 8px 8px 0 8px; /* Reducir aún más el padding lateral */
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mensajes */
+.mobile-message {
+  display: flex;
+  margin-bottom: 6px;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Ãšltimo mensaje con margen extra */
+.mobile-message:last-child {
+  margin-bottom: 12px;
+}
+
+.mobile-message-user {
+  justify-content: flex-start;
+}
+
+.mobile-message-bot {
+  justify-content: flex-end;
+}
+
+.mobile-message-content {
+  position: relative;
+  max-width: 85%;
+  min-width: 60px;
+}
+
+.mobile-message-user .mobile-message-content {
+  background: var(--message-received); /* Variable global para mensajes recibidos - ahora para usuario */
+  border-radius: 18px 18px 18px 4px;
+  padding: 8px 12px;
+  margin-right: auto;
+  margin-left: 0; /* Asegurar que no haya margen izquierdo */
+  box-shadow: var(--shadow-subtle); /* Variable global para sombra sutil */
+  border: 0.5px solid var(--border); /* Variable global para bordes */
+}
+
+.mobile-message-bot .mobile-message-content {
+  background: var(--primary-500); /* Variable global para color primario (WhatsApp verde) - ahora para bot */
+  border-radius: 18px 18px 4px 18px;
+  padding: 8px 12px;
+  margin-left: auto;
+  margin-right: 0; /* Asegurar que no haya margen derecho */
+  max-width: 90%; /* Permitir que los mensajes del bot sean más anchos */
+}
+
+.mobile-message-text {
+  font-size: 16px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  margin: 0;
+  padding-bottom: 2px;
+}
+
+.mobile-message-user .mobile-message-text {
+  color: var(--text-primary); /* Variable global para texto primario - ahora para usuario */
+}
+
+.mobile-message-bot .mobile-message-text {
+  color: var(--text-inverse); /* Variable global para texto inverso (siempre blanco en mensajes del bot) */
+}
+
+.mobile-message-time {
+  font-size: 11px;
+  margin-top: 4px;
+  text-align: right;
+  opacity: 0.7;
+}
+
+.mobile-message-user .mobile-message-time {
+  color: #8e8e93;
+}
+
+.mobile-message-bot .mobile-message-time {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mobile-action-item {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* Más espacio entre icono y texto */
+  padding: 16px 20px; /* Padding más generoso */
+  background: none;
+  border: none;
+  color: var(--text-primary); /* Usar variable de color */
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500; /* Un poco más bold */
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s ease; /* Transición más suave */
+  border-bottom: 0.5px solid var(--border);
+  position: relative;
+}
+
+.mobile-action-item:last-child {
+  border-bottom: none;
+}
+
+.mobile-action-item:hover {
+  background: var(--surface-secondary); /* Variable global para superficie secundaria */
+}
+
+.mobile-action-item:active {
+  background: var(--surface-tertiary); /* Variable global para superficie terciaria */
+  transform: scale(0.98); /* Efecto de presión sutil */
+}
+
+.mobile-action-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mobile-action-icon {
+  font-size: 20px; /* Iconos más grandes */
+  min-width: 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-action-text {
+  flex: 1;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+/* Secciones del menú */
+.mobile-bot-controls-section {
+  background: var(--surface); /* Usar variable de superficie */
+}
+
+.mobile-section-title {
+  padding: 16px 20px 12px 20px; /* Más padding */
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary); /* Variable global para texto primario */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--surface-secondary); /* Variable global para superficie secundaria */
+  border-bottom: 0.5px solid var(--border);
+  text-align: center; /* Centrar el título */
+}
+
+/* Estilos específicos para cada tipo de acción */
+.mobile-pause-bot .mobile-action-icon {
+  color: #ff9500; /* Naranja para pausar */
+}
+
+.mobile-activate-bot .mobile-action-icon {
+  color: #34c759; /* Verde para activar */
+}
+
+.mobile-human-intervention .mobile-action-icon {
+  color: #007aff; /* Azul para intervención humana */
+}
+
+/* Estados hover para acciones específicas */
+.mobile-pause-bot:hover {
+  background: rgba(255, 149, 0, 0.1);
+}
+
+.mobile-activate-bot:hover {
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.mobile-human-intervention:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.mobile-bot-control {
+  font-weight: 500;
+}
+
+.mobile-close-action {
+  color: #ff3b30;
+  font-weight: 500;
+}
+
+.mobile-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100%;
+}
+
+/* Message Bubbles */
+.mobile-message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+}
+
+.mobile-message.user {
+  align-items: flex-start;
+  align-self: flex-start;
+}
+
+.mobile-message.bot {
+  align-items: flex-end;
+  align-self: flex-end;
+}
+
+.mobile-message-bubble {
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.mobile-message.user .mobile-message-bubble {
+  background: #2c2c2e; /* Gris oscuro iOS para usuario */
+  color: #ffffff;
+  border-bottom-left-radius: 4px;
+}
+
+.mobile-message.bot .mobile-message-bubble {
+  background: #007aff; /* Azul iOS para bot */
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.mobile-message-content {
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.mobile-message-time {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 4px;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.mobile-edited-indicator {
+  color: #8e8e93;
+  font-size: 11px;
+  font-style: italic;
+  margin-left: 4px;
+}
+
+.mobile-human-indicator {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* Status Change Messages */
+.mobile-status-change {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0; /* Margen más sutil */
+  padding: 0 20px;
+}
+
+.mobile-status-change-content {
+  background: rgba(142, 142, 147, 0.08); /* Más sutil en modo claro */
+  border-radius: 12px; /* Más redondeado */
+  padding: 8px 14px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 85%;
+  border: 1px solid rgba(142, 142, 147, 0.1); /* Borde sutil */
+}
+
+@media (prefers-color-scheme: dark) {
+  .mobile-status-change-content {
+    background: rgba(142, 142, 147, 0.15); /* Más sutil en modo oscuro */
+    border: 1px solid rgba(142, 142, 147, 0.2);
+  }
+}
+
+.mobile-status-change-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.mobile-status-change-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.mobile-status-change-text {
+  color: #3c3c43; /* Gris oscuro en modo claro */
+  font-size: 13px;
+  font-weight: 500; /* Un poco más bold para legibilidad */
+  line-height: 1.2;
+}
+
+.mobile-status-change-subtitle {
+  color: #8e8e93; /* Gris más claro para subtitle */
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.1;
+  opacity: 0.8;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mobile-status-change-text {
+    color: #ebebf5; /* Gris claro en modo oscuro */
+  }
+  
+  .mobile-status-change-subtitle {
+    color: #98989f; /* Gris claro para subtitle en dark mode */
+  }
+}
+
+.mobile-status-change-time {
+  color: var(--color-text-secondary); /* Gris en ambos modos */
+  font-size: 10px;
+  font-weight: 400;
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* Loading Skeleton */
+.mobile-messages-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.mobile-message-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mobile-message-skeleton:nth-child(even) {
+  align-items: flex-end;
+}
+
+.mobile-skeleton-bubble {
+  height: 40px;
+  background: #1c1c1e;
+  border-radius: 18px;
+  width: 60%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.mobile-message-skeleton:nth-child(even) .mobile-skeleton-bubble {
+  width: 50%;
+}
+
+/* Empty State */
+.mobile-empty-messages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #8e8e93;
+  height: 100%;
+  padding: 40px;
+}
+
+.mobile-empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.mobile-empty-messages h3 {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.mobile-empty-messages p {
+  color: #8e8e93;
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Safe area adjustments */
+@supports (padding: max(0px)) {
+  .mobile-message-header {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+  
+  .mobile-messages-container {
+    padding-bottom: max(8px, env(safe-area-inset-bottom)); /* Reducir significativamente el padding */
+  }
+}
+
+/* =====================================================
+   DIVISORES DE CAMBIO DE ESTADO DEL BOT - MÃ“VIL
+   ===================================================== */
+
+/* Divisor de cambio de estado del bot */
+.mobile-message-status-change {
+  display: flex;
+  align-items: center;
+  margin: 16px 8px;
+  gap: 8px;
+  opacity: 1 !important;
+  animation: slideInStatus 0.5s ease-out forwards;
+}
+
+.mobile-status-change-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #48484a, transparent);
+  opacity: 1 !important;
+}
+
+.mobile-status-change-content {
+  background: #1c1c1e !important;
+  border: 1px solid #48484a !important;
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  position: relative;
+  min-width: 180px;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.mobile-status-change-content:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  border-color: #64748b !important;
+}
+
+.mobile-status-change-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, transparent 0%, rgba(0, 122, 255, 0.1) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+.mobile-status-transition {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mobile-status-from,
+.mobile-status-to {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #2c2c2e !important;
+  border: 1px solid #48484a !important;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.2s ease;
+  color: #ffffff !important;
+}
+
+.mobile-status-arrow {
+  font-size: 10px !important;
+  color: #8e8e93 !important;
+  font-weight: bold !important;
+  margin: 0 4px;
+  transform: rotate(90deg);
+  animation: none;
+}
+
+.mobile-status-change-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  font-size: 9px;
+  color: #8e8e93 !important;
+}
+
+.mobile-status-change-time {
+  font-weight: 500 !important;
+  color: var(--color-text-secondary);
+  font-size: 10px !important;
+}
+
+.mobile-status-trigger {
+  font-style: italic;
+  opacity: 1 !important;
+  color: #8e8e93 !important;
+  font-size: 9px !important;
+}
+
+/* Estados especÃ­ficos para mÃ³vil */
+.mobile-status-from.active,
+.mobile-status-to.active {
+  background: rgba(52, 199, 89, 0.2) !important;
+  border-color: rgba(52, 199, 89, 0.4) !important;
+  color: #34c759 !important;
+}
+
+.mobile-status-from.paused,
+.mobile-status-to.paused {
+  background: rgba(255, 159, 10, 0.2) !important;
+  border-color: rgba(255, 159, 10, 0.4) !important;
+  color: #ff9f0a !important;
+}
+
+.mobile-status-from.human_takeover,
+.mobile-status-to.human_takeover {
+  background: rgba(255, 59, 48, 0.2) !important;
+  border-color: rgba(255, 59, 48, 0.4) !important;
+  color: #ff3b30 !important;
+}
+
+/* AnimaciÃ³n de apariciÃ³n para mÃ³vil */
+@keyframes slideInStatus {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1 !important;
+    transform: translateY(0);
+  }
+}
+
+/* Indicadores especiales para mÃ³vil */
+.mobile-edited-indicator {
+  font-size: 10px;
+  color: #8e8e93;
+  margin-left: 4px;
+}
+
+/* Estados de carga y vacÃ­o */
+.mobile-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: #f2f2f7; /* Gris claro en modo claro */
+}
+
+@media (prefers-color-scheme: dark) {
+  .mobile-loading {
+    background: #000000; /* Negro en modo oscuro */
+  }
+}
+
+.mobile-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: #8e8e93; /* Gris en ambos modos */
+}
+
+.mobile-loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 2px solid #e5e5ea;
+  border-top: 2px solid #007aff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mobile-loading-spinner {
+    border: 2px solid #48484a;
+    border-top: 2px solid #007aff;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.mobile-no-conversation,
+.mobile-no-messages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  color: #8e8e93; /* Gris en ambos modos */
+  font-size: 16px;
+  padding: 20px;
+}
+
+.mobile-no-conversation-content,
+.mobile-no-messages {
+  background: #f2f2f7; /* Gris claro en modo claro */
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mobile-no-conversation-content,
+  .mobile-no-messages {
+    background: #000000; /* Negro en modo oscuro */
+  }
+}
+
+.mobile-human-indicator {
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+/* Input de mensajes estilo WhatsApp iOS - Basado en MessageView.jsx */
+.mobile-human-message-area {
+  background: var(--surface-secondary); /* Variable global para superficie secundaria */
+  border-top: 0.5px solid var(--border); /* Variable global para bordes */
+  padding: 6px 16px; /* Reducir padding superior */
+  padding-bottom: max(6px, env(safe-area-inset-bottom, 6px)); /* Reducir padding inferior */
+}
+
+.mobile-human-message-input {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--surface); /* Variable global para superficie */
+  border-radius: 20px;
+  border: 0.5px solid var(--border); /* Variable global para bordes */
+  padding: 8px 12px;
+  min-height: 36px;
+  max-height: 100px;
+}
+
+.mobile-human-textarea {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary); /* Variable global para texto primario */
+  font-size: 16px;
+  line-height: 1.4;
+  resize: none;
+  min-height: 20px;
+  max-height: 80px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.mobile-human-textarea::placeholder {
+  color: var(--text-tertiary); /* Variable global para texto terciario */
+}
+
+.mobile-send-human-btn {
+  background: var(--primary-500); /* Variable global para color primario */
+  border: none;
+  border-radius: 18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.mobile-send-human-btn:disabled {
+  background: var(--gray-300); /* Variable global para gris desactivado */
+  cursor: not-allowed;
+}
+
+.mobile-send-human-btn:active:not(:disabled) {
+  transform: scale(0.95);
+  background: var(--primary-600); /* Variable global para primary mÃ¡s oscuro */
+}
+
+.mobile-send-icon,
+.mobile-loading-icon {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.mobile-send-icon {
+  transform: translateX(1px); /* Centrar visualmente la flecha */
+}
+
+.mobile-human-message-hint {
+  font-size: 11px;
+  color: #8e8e93;
+  text-align: center;
+  margin-top: 6px;
+  padding: 0 4px;
+  line-height: 1.3;
+}
+ / *   = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
+ S K E L E T O N   L O A D I N G   P R O F E S I O N A L   -   E S T I L O   W H A T S A P P  
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =   * / 
+ 
+ 
+/* ===================================================== SKELETON LOADING PROFESIONAL - ESTILO WHATSAPP 
+===================================================== */
+/* ===================================================== SKELETON LOADING PROFESIONAL - ESTILO WHATSAPP 
+===================================================== */
+
+/* Contenedor principal del skeleton */
+.skeleton-container {
+  padding: 16px;
+  background: var(--bg-color);
+  overflow-y: auto;
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* Header skeleton */
+.skeleton-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-color);
+  gap: 12px;
+}
+
+.skeleton-back-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  flex-shrink: 0;
+}
+
+.skeleton-user-info {
+  flex: 1;
+}
+
+.skeleton-user-name {
+  width: 120px;
+  height: 18px;
+  border-radius: 9px;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  margin-bottom: 4px;
+}
+
+.skeleton-user-status {
+  width: 80px;
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+/* Messages area skeleton */
+.skeleton-messages {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Status divider skeleton */
+.skeleton-status-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.skeleton-status-pill {
+  width: 200px;
+  height: 32px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+/* Message skeleton base */
+.skeleton-message {
+  display: flex;
+  margin-bottom: 12px;
+  animation-delay: 0.1s;
+}
+
+.skeleton-message:nth-child(even) {
+  animation-delay: 0.2s;
+}
+
+.skeleton-message:nth-child(3n) {
+  animation-delay: 0.3s;
+}
+
+/* Bot message skeleton */
+.skeleton-message.bot {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+  margin-left: 25%;
+}
+
+.skeleton-message.bot .skeleton-message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.skeleton-message.bot .skeleton-message-content {
+  max-width: 75%;
+}
+
+.skeleton-message.bot .skeleton-message-bubble {
+  background: var(--message-bot-bg);
+  border-radius: 18px 18px 4px 18px;
+  padding: 12px 16px;
+  position: relative;
+}
+
+/* User message skeleton */
+.skeleton-message.user {
+  align-self: flex-start;
+  flex-direction: row;
+}
+
+.skeleton-message.user .skeleton-message-content {
+  max-width: 75%;
+}
+
+.skeleton-message.user .skeleton-message-bubble {
+  background: var(--message-user-bg);
+  border-radius: 18px 18px 18px 4px;
+  padding: 12px 16px;
+  position: relative;
+}
+
+/* Message text lines skeleton */
+.skeleton-text-line {
+  height: 16px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  margin-bottom: 6px;
+}
+
+.skeleton-text-line:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-text-line.short {
+  width: 60%;
+}
+
+.skeleton-text-line.medium {
+  width: 80%;
+}
+
+.skeleton-text-line.long {
+  width: 95%;
+}
+
+/* Message timestamp skeleton */
+.skeleton-timestamp {
+  width: 40px;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  margin-top: 4px;
+  align-self: flex-end;
+}
+
+/* Input area skeleton */
+.skeleton-input-area {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-color);
+}
+
+.skeleton-input-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skeleton-input {
+  flex: 1;
+  height: 40px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+.skeleton-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+/* Bot controls skeleton */
+.skeleton-bot-controls {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-color);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.skeleton-control-btn {
+  height: 36px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-highlight) 50%, var(--skeleton-base) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+.skeleton-control-btn.small {
+  width: 80px;
+}
+
+.skeleton-control-btn.medium {
+  width: 120px;
+}
+
+.skeleton-control-btn.large {
+  width: 160px;
+}
+
+/* Shimmer animation */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* CSS Variables para skeleton (light/dark theme) */
+:root {
+  --skeleton-base: #f0f0f0;
+  --skeleton-highlight: #f8f8f8;
+}
+
+[data-theme="dark"] {
+  --skeleton-base: #2a2a2a;
+  --skeleton-highlight: #3a3a3a;
+}
+
+/* Responsive skeleton adjustments */
+@media (max-width: 768px) {
+  .skeleton-container {
+    padding: 12px;
+  }
+  
+  .skeleton-messages {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .skeleton-message.bot {
+    margin-left: 20%;
+  }
+  
+  .skeleton-message.bot .skeleton-message-content,
+  .skeleton-message.user .skeleton-message-content {
+    max-width: 100%;
+  }
+  
+  .skeleton-input-area {
+    padding: 12px;
+  }
+  
+  .skeleton-bot-controls {
+    padding: 8px 12px;
+  }
+}
+
+/* Pulse animation for loading state */
+.skeleton-pulse {
+  animation: skeleton-pulse 2s infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Loading dots animation */
+.skeleton-loading-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 12px 0;
+}
+
+.skeleton-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--skeleton-base);
+  animation: skeleton-dot-bounce 1.4s infinite both;
+}
+
+.skeleton-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.skeleton-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes skeleton-dot-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Smooth transitions */
+.skeleton-container * {
+  transition: all 0.3s ease;
+}
+
+/* Performance optimizations */
+.skeleton-container {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.skeleton-shimmer {
+  will-change: background-position;
+}
+
+

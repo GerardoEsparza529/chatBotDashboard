@@ -2,14 +2,31 @@
  * Componente Sidebar - Navegación lateral estilo WhatsApp Web
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MessageCircle, BarChart3, Settings, Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import './Sidebar.css';
 
 const Sidebar = ({ activeSection, onSectionChange, isCollapsed, onToggleCollapse }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const { theme, toggleTheme, isDark } = useTheme();
+
+  // Detectar cambios de tamaño de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      
+      // En desktop, cerrar sidebar móvil
+      if (!mobile) {
+        setIsMobileOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const sections = [
     {
@@ -47,17 +64,19 @@ const Sidebar = ({ activeSection, onSectionChange, isCollapsed, onToggleCollapse
 
   return (
     <>
-      {/* Botón de menú móvil */}
-      <button 
-        className="sidebar-mobile-toggle"
-        onClick={toggleMobile}
-        aria-label="Abrir menú"
-      >
-        <Menu size={20} />
-      </button>
+      {/* Botón de menú móvil - solo visible en móvil */}
+      {isMobile && (
+        <button 
+          className="sidebar-mobile-toggle"
+          onClick={toggleMobile}
+          aria-label="Abrir menú"
+        >
+          <Menu size={20} />
+        </button>
+      )}
 
       {/* Overlay para móvil */}
-      {isMobileOpen && (
+      {isMobileOpen && isMobile && (
         <div 
           className="sidebar-overlay"
           onClick={() => setIsMobileOpen(false)}
@@ -65,7 +84,7 @@ const Sidebar = ({ activeSection, onSectionChange, isCollapsed, onToggleCollapse
       )}
 
       {/* Sidebar */}
-      <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileOpen ? 'mobile-open' : ''}`}>
+      <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileOpen ? 'mobile-active' : ''}`}>
         {/* Header del sidebar */}
         <div className="sidebar-header">
           <div className="sidebar-brand">

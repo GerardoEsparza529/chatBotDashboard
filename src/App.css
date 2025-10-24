@@ -247,6 +247,25 @@ body {
   grid-template-columns: 80px 1fr;
 }
 
+/* === RESPONSIVE MÓVIL === */
+@media (max-width: 768px) {
+  .app {
+    grid-template-columns: 1fr; /* Una sola columna en móvil */
+    background: #000000; /* Fondo negro iOS */
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+  
+  .app.mobile {
+    grid-template-columns: 1fr;
+  }
+  
+  .app.sidebar-collapsed {
+    grid-template-columns: 1fr; /* Mantener una columna */
+  }
+}
+
 .main-content {
   flex: 1;
   background: var(--surface);
@@ -256,6 +275,16 @@ body {
   flex-direction: column;
   /* Removed transition: all 0.25s ease; that was causing compression effect */
   transition: background-color 0.3s ease;
+}
+
+/* Main content responsive para móvil */
+@media (max-width: 768px) {
+  .main-content {
+    background: #000000; /* Fondo negro iOS */
+    width: 100vw;
+    height: 100vh;
+    grid-column: 1;
+  }
 }
 
 /* === RESET DE COLORES === */

@@ -1,0 +1,311 @@
+/**
+ * Estilos para MobileConversationList - Lista móvil estilo iOS WhatsApp
+ */
+
+.mobile-conversation-list {
+  background: var(--background); /* Usar variable global del tema */
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Header Bar */
+.mobile-conversation-header-bar {
+  background: var(--surface); /* Usar variable global del tema */
+  padding: 20px 20px 16px 20px;
+  border-bottom: 0.5px solid var(--border);
+  /* Status bar space */
+  padding-top: max(20px, calc(env(safe-area-inset-top) + 8px));
+}
+
+.mobile-conversation-title {
+  color: var(--text-primary); /* Usar variable global del tema */
+  font-size: 34px; /* Título más grande estilo iOS */
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  line-height: 1.1;
+}
+
+.mobile-conversation-count {
+  color: #8e8e93;
+  font-size: 15px;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Search Container */
+.mobile-search-container {
+  background: var(--surface); /* Usar variable global para superficie */
+  padding: 0px 16px 16px 16px;
+  border-bottom: 0.5px solid var(--border); /* Usar variable global para bordes */
+}
+
+.mobile-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mobile-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-secondary); /* Usar variable global para texto secundario */
+  font-size: 18px;
+  z-index: 1;
+}
+
+.mobile-search-input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  background: var(--input-background); /* Usar variable global para fondo de input */
+  border: none;
+  border-radius: 10px;
+  color: var(--text-primary); /* Usar variable global para texto primario */
+  font-size: 17px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.mobile-search-input::placeholder {
+  color: var(--text-secondary); /* Usar variable global para texto secundario */
+}
+
+.mobile-search-input:focus {
+  background: var(--input-background-focus); /* Usar variable global para fondo de input enfocado */
+}
+
+/* Conversations Container */
+.mobile-conversations-container {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Scroll suave iOS */
+  background: var(--background); /* Usar variable global del tema */
+  /* Espacio para bottom nav - más generoso */
+  padding-bottom: 90px;
+}
+
+/* Conversation Item */
+.mobile-conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--background); /* Usar variable global del tema */
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  gap: 16px; /* Más espacio entre avatar y contenido */
+  min-height: 76px; /* Un poco más alto */
+}
+
+.mobile-conversation-item:active {
+  background: var(--surface); /* Usar variable global para feedback táctil */
+}
+
+.mobile-conversation-item.active {
+  background: #1c1c1e;
+}
+
+/* Avatar */
+.mobile-conversation-avatar {
+  width: 52px; /* Un poco más grande */
+  height: 52px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%); /* Gradiente más atractivo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  font-size: 20px; /* Texto más grande */
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+/* Content */
+.mobile-conversation-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-conversation-name {
+  color: var(--text-primary); /* Usar variable global para texto primario */
+  font-size: 17px; /* Tamaño iOS estándar */
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.mobile-conversation-time {
+  color: var(--text-secondary); /* Usar variable global para texto secundario */
+  font-size: 15px; /* Un poco más grande */
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+.mobile-conversation-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px; /* Espacio entre nombre y preview */
+}
+
+.mobile-conversation-preview {
+  color: var(--text-secondary); /* Usar variable global para texto secundario */
+  font-size: 15px; /* Consistente con time */
+  font-weight: 400;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.mobile-conversation-badges {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Urgent Badge */
+.mobile-urgent-badge {
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* Unread Badge */
+.mobile-unread-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: #ff3b30;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 18px;
+  line-height: 1.2;
+}
+
+/* Bot Status Badge */
+.mobile-bot-status-badge {
+  display: inline-block;
+  padding: 3px 8px; /* Un poco más de padding */
+  border-radius: 10px; /* Más redondeado */
+  color: #ffffff;
+  font-size: 11px; /* Un poco más grande */
+  font-weight: 700; /* Más bold */
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+}
+
+/* Loading Skeleton */
+.mobile-conversation-skeleton {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 12px;
+}
+
+.mobile-skeleton-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: #1c1c1e;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.mobile-skeleton-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-skeleton-name {
+  height: 16px;
+  background: #1c1c1e;
+  border-radius: 4px;
+  width: 60%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.mobile-skeleton-preview {
+  height: 14px;
+  background: #1c1c1e;
+  border-radius: 4px;
+  width: 80%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Empty State */
+.mobile-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  text-align: center;
+  color: #8e8e93;
+  height: 100%;
+}
+
+.mobile-empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.mobile-empty-state h3 {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.mobile-empty-state p {
+  color: #8e8e93;
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Safe area adjustments */
+@supports (padding: max(0px)) {
+  .mobile-conversation-header-bar {
+    padding-top: max(20px, calc(env(safe-area-inset-top) + 8px));
+  }
+  
+  .mobile-conversations-container {
+    padding-bottom: max(90px, calc(90px + env(safe-area-inset-bottom)));
+  }
+}

@@ -13,6 +13,13 @@
   background: rgba(255, 255, 255, 0.95);
 }
 
+/* === RESPONSIVE MÓVIL === */
+@media (max-width: 768px) {
+  .header {
+    display: none; /* Ocultar header en móvil para más espacio */
+  }
+}
+
 .header-content {
   max-width: 1400px;
   margin: 0 auto;

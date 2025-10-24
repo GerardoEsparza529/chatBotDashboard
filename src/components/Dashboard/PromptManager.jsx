@@ -4,6 +4,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Save, Plus, Edit3, Trash2, Eye, MessageSquare } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faBrain, 
+  faBriefcase, 
+  faCalendarAlt, 
+  faInfoCircle 
+} from '@fortawesome/free-solid-svg-icons';
 import { getBusinesses, getBusinessPrompts, createPrompt, updatePrompt, deletePrompt } from '../../services/api';
 import './PromptManager.css';
 
@@ -22,10 +29,10 @@ const PromptManager = ({ isOpen, onClose }) => {
   });
 
   const promptTypes = [
-    { value: 'DETECTION', label: 'Detección de Intenciones', icon: '🧠' },
-    { value: 'SALES', label: 'Orientación de Ventas', icon: '💼' },
-    { value: 'APPOINTMENT', label: 'Gestión de Citas', icon: '📅' },
-    { value: 'INFO', label: 'Información General', icon: 'ℹ️' }
+    { value: 'DETECTION', label: 'Detección de Intenciones', icon: <FontAwesomeIcon icon={faBrain} /> },
+    { value: 'SALES', label: 'Orientación de Ventas', icon: <FontAwesomeIcon icon={faBriefcase} /> },
+    { value: 'APPOINTMENT', label: 'Gestión de Citas', icon: <FontAwesomeIcon icon={faCalendarAlt} /> },
+    { value: 'INFO', label: 'Información General', icon: <FontAwesomeIcon icon={faInfoCircle} /> }
   ];
 
   // Función para cargar negocios

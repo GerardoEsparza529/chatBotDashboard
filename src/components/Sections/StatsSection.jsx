@@ -3,6 +3,8 @@
  */
 
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChartBar, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import './StatsSection.css';
 
 const StatsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
@@ -16,7 +18,7 @@ const StatsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
       <div className="stats-content">
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-icon">📊</div>
+            <FontAwesomeIcon icon={faChartBar} className="stat-icon" />
             <div className="stat-info">
               <h3>Mensajes Totales</h3>
               <p className="stat-value">1,234</p>
@@ -54,7 +56,15 @@ const StatsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
             onClick={onRefresh}
             disabled={isRefreshing}
           >
-            {isRefreshing ? '⟳ Actualizando...' : '🔄 Actualizar Estadísticas'}
+            {isRefreshing ? (
+              <>
+                <FontAwesomeIcon icon={faSyncAlt} spin /> Actualizando...
+              </>
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faSyncAlt} /> Actualizar Estadísticas
+              </>
+            )}
           </button>
         </div>
       </div>

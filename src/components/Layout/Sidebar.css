@@ -19,8 +19,18 @@
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
+/* Mostrar botón móvil solo en dispositivos móviles */
+@media (max-width: 768px) {
+  .sidebar-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #007aff; /* Azul iOS */
+  }
+}
+
 .sidebar-mobile-toggle:hover {
-  background: var(--primary-600);
+  background: #0056cc; /* Azul iOS más oscuro */
   transform: scale(1.05);
 }
 
@@ -36,6 +46,13 @@
   backdrop-filter: blur(4px);
 }
 
+/* Mostrar overlay solo en móvil */
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+  }
+}
+
 .sidebar {
   position: relative;
   height: 100vh;
@@ -47,6 +64,28 @@
   /* Removed transition: all 0.25s ease; that was contributing to compression effect */
   transition: width 0.25s ease, background-color 0.3s ease;
   overflow: hidden;
+}
+
+/* === RESPONSIVE MÓVIL === */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none; /* Ocultar sidebar en móvil por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1001;
+    background: #000000; /* Fondo negro iOS */
+    border-right: none;
+  }
+  
+  /* Mostrar sidebar cuando está activo en móvil */
+  .sidebar.mobile-active {
+    display: flex;
+  }
 }
 
 .sidebar.collapsed {

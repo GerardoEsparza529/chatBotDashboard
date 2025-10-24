@@ -4,6 +4,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { User, Bot, Clock, ChevronLeft, ChevronRight, Edit3, Send, Pause, Play, UserX } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPause, faUserTie, faRobot, faLightbulb } from '@fortawesome/free-solid-svg-icons';
 import { changeBotStatus, editBotMessage, sendHumanMessage, setRequireHumanIntervention } from '../../services/api';
 import webSocketService from '../../services/websocket';
 import './MessageView.css';
@@ -15,7 +17,9 @@ const MessageView = ({
   currentPage,
   totalPages,
   onPageChange,
-  onInterventionAction
+  onInterventionAction,
+  onBackToConversations,
+  isMobile = false
 }) => {
   const messagesEndRef = useRef(null);
   const unreadDividerRef = useRef(null);
@@ -181,6 +185,72 @@ const MessageView = ({
   };
 
   const unreadDividerIndex = getUnreadDividerIndex();
+
+  // Detectar cambios de bot_status en la secuencia de mensajes
+  const getBotStatusChanges = () => {
+    if (!allMessages.length || !conversation) return [];
+    
+    const statusChanges = [];
+    let lastKnownStatus = 'active'; // Estado inicial por defecto
+    
+    // Ordenar mensajes por fecha para análisis secuencial
+    const sortedMessages = [...allMessages].sort((a, b) => 
+      new Date(a.created_at) - new Date(b.created_at)
+    );
+    
+    for (let i = 0; i < sortedMessages.length; i++) {
+      const message = sortedMessages[i];
+      const messageTime = new Date(message.created_at);
+      let inferredStatus = null;
+      
+      // 1. Si el mensaje tiene metadata específico de bot_status
+      if (message.metadata?.bot_status_when_received) {
+        inferredStatus = message.metadata.bot_status_when_received;
+      }
+      // 2. Si es un mensaje enviado por humano, inferir human_takeover
+      else if (message.metadata?.sent_by_human) {
+        inferredStatus = 'human_takeover';
+      }
+      // 3. Si es una respuesta automática del bot (sin intervención humana)
+      else if (message.sender === 'bot' && 
+               !message.metadata?.sent_by_human && 
+               message.metadata?.generated_by_ai) {
+        inferredStatus = 'active';
+      }
+      // 4. Si es un mensaje del usuario y el último estado era humano, mantener
+      else if (message.sender === 'user' && lastKnownStatus === 'human_takeover') {
+        inferredStatus = 'human_takeover';
+      }
+      
+      // Detectar cambio de estado real
+      if (inferredStatus && inferredStatus !== lastKnownStatus) {
+        // Buscar el índice en el array original (no ordenado)
+        const originalIndex = allMessages.findIndex(msg => 
+          msg.id === message.id || 
+          (msg.created_at === message.created_at && msg.content === message.content)
+        );
+        
+        statusChanges.push({
+          index: originalIndex,
+          fromStatus: lastKnownStatus,
+          toStatus: inferredStatus,
+          timestamp: messageTime,
+          triggeredBy: message.sender,
+          messageId: message.id
+        });
+        
+        console.log(`🔄 Cambio de estado detectado: ${lastKnownStatus} → ${inferredStatus} (índice: ${originalIndex})`);
+        lastKnownStatus = inferredStatus;
+      } else if (inferredStatus) {
+        lastKnownStatus = inferredStatus;
+      }
+    }
+    
+    console.log(`📊 Total cambios de estado detectados: ${statusChanges.length}`);
+    return statusChanges;
+  };
+
+  const botStatusChanges = getBotStatusChanges();
 
   // Debug controlado (solo cuando cambia el count, no en cada render)
   const debugRef = useRef({ lastTotal: 0 });
@@ -441,6 +511,187 @@ const MessageView = ({
     }
   };
 
+  // Parsear mensaje de sistema para extraer información de cambio de estado
+  const parseStatusChangeFromMessage = (message, index) => {
+    const content = message.content;
+    const timestamp = new Date(message.created_at);
+    
+    // Detectar diferentes formatos de mensajes de cambio de estado
+    
+    // Formato: "Bot status changed from X to Y"
+    const statusChangeRegex = /Bot status changed from (\w+) to (\w+)/;
+    const statusMatch = content.match(statusChangeRegex);
+    
+    if (statusMatch) {
+      const [, fromStatus, toStatus] = statusMatch;
+      return {
+        index,
+        fromStatus,
+        toStatus,
+        timestamp,
+        triggeredBy: 'system',
+        messageId: message.id
+      };
+    }
+    
+    // Detectar casos específicos de cambio de estado
+    if (content.includes('Bot status changed from human_takeover to active')) {
+      return {
+        index,
+        fromStatus: 'human_takeover',
+        toStatus: 'active',
+        timestamp,
+        triggeredBy: 'system',
+        messageId: message.id
+      };
+    }
+    
+    if (content.includes('Bot status changed from active to human_takeover')) {
+      return {
+        index,
+        fromStatus: 'active',
+        toStatus: 'human_takeover',
+        timestamp,
+        triggeredBy: 'system',
+        messageId: message.id
+      };
+    }
+    
+    if (content.includes('Bot reactivado')) {
+      return {
+        index,
+        fromStatus: 'paused',
+        toStatus: 'active',
+        timestamp,
+        triggeredBy: 'system',
+        messageId: message.id
+      };
+    }
+    
+    if (content.includes('Bot desactivado - humano tomó control')) {
+      return {
+        index,
+        fromStatus: 'active',
+        toStatus: 'human_takeover',
+        timestamp,
+        triggeredBy: 'human',
+        messageId: message.id
+      };
+    }
+    
+    if (content.includes('Bot desactivado') || content.includes('humano tomó control')) {
+      return {
+        index,
+        fromStatus: 'active',
+        toStatus: 'human_takeover',
+        timestamp,
+        triggeredBy: 'human',
+        messageId: message.id
+      };
+    }
+    
+    if (content.includes('Bot pausado') || content.includes('Bot detenido')) {
+      return {
+        index,
+        fromStatus: 'active',
+        toStatus: 'paused',
+        timestamp,
+        triggeredBy: 'system',
+        messageId: message.id
+      };
+    }
+    
+    // Fallback para cualquier mensaje que comience con "Bot" pero no coincida con los patrones anteriores
+    if (content.startsWith('Bot')) {
+      return {
+        index,
+        fromStatus: 'active',
+        toStatus: 'human_takeover',
+        timestamp,
+        triggeredBy: 'system',
+        messageId: message.id
+      };
+    }
+    
+    return null;
+  };
+
+  // Función para renderizar divisor de cambio de estado
+  const renderStatusChangeDivider = (change) => {
+    const getStatusInfo = (status) => {
+      switch (status) {
+        case 'active':
+          return { 
+            text: 'Bot Automático', 
+            icon: <FontAwesomeIcon icon={faRobot} />, 
+            color: '#4ade80',
+            bgColor: '#dcfce7'
+          };
+        case 'paused':
+          return { 
+            text: 'Bot Pausado', 
+            icon: <FontAwesomeIcon icon={faPause} />, 
+            color: '#fbbf24',
+            bgColor: '#fef3c7'
+          };
+        case 'human_takeover':
+          return { 
+            text: 'Agente Humano', 
+            icon: <FontAwesomeIcon icon={faUserTie} />, 
+            color: '#f87171',
+            bgColor: '#fee2e2'
+          };
+        default:
+          return { 
+            text: 'Bot Automático', 
+            icon: '🤖', 
+            color: '#4ade80',
+            bgColor: '#dcfce7'
+          };
+      }
+    };
+
+    const fromInfo = getStatusInfo(change.fromStatus);
+    const toInfo = getStatusInfo(change.toStatus);
+    const timeStr = new Date(change.timestamp).toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    return (
+      <div className="status-change-divider" key={`status-change-${change.messageId || change.index}`}>
+        <div className="status-change-line"></div>
+        <div 
+          className="status-change-content"
+          style={{ 
+            borderColor: toInfo.color,
+            backgroundColor: toInfo.bgColor
+          }}
+        >
+          <div className="status-transition">
+            <span className="status-from" style={{ color: fromInfo.color }}>
+              {fromInfo.icon} {fromInfo.text}
+            </span>
+            <span className="status-arrow">→</span>
+            <span className="status-to" style={{ color: toInfo.color }}>
+              {toInfo.icon} {toInfo.text}
+            </span>
+          </div>
+          <div className="status-change-details">
+            <span className="status-change-time">{timeStr}</span>
+            {change.triggeredBy && (
+              <span className="status-trigger">
+                Activado por {change.triggeredBy === 'user' ? 'cliente' : change.triggeredBy === 'bot' ? 'sistema' : change.triggeredBy}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="status-change-line"></div>
+      </div>
+    );
+  };
+
   const getBotStatusText = () => {
     switch (conversation?.bot_status) {
       case 'active':
@@ -520,6 +771,17 @@ const MessageView = ({
     <div className="message-view">
       <div className="message-header">
         <div className="header-left">
+          {/* Botón de volver para móvil */}
+          {isMobile && onBackToConversations && (
+            <button 
+              className="back-button"
+              onClick={onBackToConversations}
+              title="Volver a conversaciones"
+            >
+              <ChevronLeft size={20} />
+            </button>
+          )}
+          
           <div className="user-avatar">
             <User size={20} />
           </div>
@@ -661,16 +923,39 @@ const MessageView = ({
           </div>
         ) : (
           <>
-            {allMessages.map((message, index) => (
-              <div key={`message-wrapper-${message.id || index}`}>
-                {/* Mostrar divisor de mensajes sin leer */}
-                {unreadDividerIndex === index && (
-                  <div className="unread-divider" ref={unreadDividerRef}>
-                    <div className="unread-divider-line"></div>
-                    <span className="unread-divider-text">Mensajes sin leer</span>
-                    <div className="unread-divider-line"></div>
-                  </div>
-                )}
+            {allMessages.map((message, index) => {
+              // Detectar si este mensaje es un cambio de estado del sistema
+              const isStatusChangeMessage = (message.sender === 'system' || message.sender === 'bot') && 
+                message.content && (
+                  message.content.startsWith('Bot') ||
+                  message.content.includes('status changed') ||
+                  message.content.includes('reactivado') ||
+                  message.content.includes('desactivado') ||
+                  message.content.includes('humano tomó control')
+                );
+              
+              // Si es un mensaje de cambio de estado, renderizarlo como divisor
+              if (isStatusChangeMessage) {
+                const statusChange = parseStatusChangeFromMessage(message, index);
+                return statusChange ? renderStatusChangeDivider(statusChange) : null;
+              }
+              
+              // Buscar si hay un cambio de estado en este índice (para mensajes normales)
+              const statusChange = botStatusChanges.find(change => change.index === index);
+              
+              return (
+                <div key={`message-wrapper-${message.id || index}`}>
+                  {/* Mostrar divisor de cambio de estado */}
+                  {statusChange && renderStatusChangeDivider(statusChange)}
+                  
+                  {/* Mostrar divisor de mensajes sin leer */}
+                  {unreadDividerIndex === index && (
+                    <div className="unread-divider" ref={unreadDividerRef}>
+                      <div className="unread-divider-line"></div>
+                      <span className="unread-divider-text">Mensajes sin leer</span>
+                      <div className="unread-divider-line"></div>
+                    </div>
+                  )}
                 
                 <div
                   className={`message ${message.sender} ${
@@ -750,7 +1035,8 @@ const MessageView = ({
                 </div>
               </div>
             </div>
-            ))}
+            );
+            })}
             <div ref={messagesEndRef} />
           </>
         )}
@@ -787,7 +1073,7 @@ const MessageView = ({
             </button>
           </div>
           <div className="human-message-hint">
-            💡 Los mensajes enviados aquí aparecerán como respuestas del bot pero con indicador humano
+            <FontAwesomeIcon icon={faLightbulb} /> Los mensajes enviados aquí aparecerán como respuestas del bot pero con indicador humano
           </div>
         </div>
       )}
