@@ -1078,33 +1078,7 @@ const MessageView = ({
         </div>
       )}
       
-      {totalPages > 1 && (
-        <div className="message-footer">
-          <div className="footer-pagination">
-            <button
-              className="pagination-button"
-              onClick={() => onPageChange && onPageChange(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              <ChevronLeft size={16} />
-              Anteriores
-            </button>
-            
-            <span className="pagination-info">
-              Página {currentPage} de {totalPages}
-            </span>
-            
-            <button
-              className="pagination-button"
-              onClick={() => onPageChange && onPageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages}
-            >
-              Siguientes
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };

@@ -4,12 +4,14 @@
 
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartBar, faSyncAlt, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faSyncAlt, faWrench, faRobot, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { useTheme } from '../../contexts/ThemeContext';
 import PromptManager from '../Dashboard/PromptManager';
 import './SettingsSection.css';
 
 const SettingsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
   const [showPromptManager, setShowPromptManager] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const handleOpenPromptManager = () => {
     setShowPromptManager(true);
@@ -17,6 +19,14 @@ const SettingsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
 
   const handleClosePromptManager = () => {
     setShowPromptManager(false);
+  };
+
+  const handleToggleTheme = () => {
+    toggleTheme();
+  };
+
+  const getThemeText = () => {
+    return theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
   };
 
   return (
@@ -29,10 +39,19 @@ const SettingsSection = ({ isRefreshing, onRefresh, isSidebarCollapsed }) => {
       <div className="settings-content">
         <div className="settings-grid">
           <div className="setting-card" onClick={handleOpenPromptManager}>
-            <div className="setting-icon">🤖</div>
+            <FontAwesomeIcon icon={faRobot} className="setting-icon" />
             <div className="setting-info">
               <h3>Gestión de Prompts</h3>
               <p>Configura y edita los prompts del chatbot</p>
+            </div>
+            <div className="setting-arrow">›</div>
+          </div>
+
+          <div className="setting-card" onClick={handleToggleTheme}>
+            <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} className="setting-icon" />
+            <div className="setting-info">
+              <h3>Tema de la Aplicación</h3>
+              <p>{getThemeText()}</p>
             </div>
             <div className="setting-arrow">›</div>
           </div>

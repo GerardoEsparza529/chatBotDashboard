@@ -8,11 +8,6 @@ import './ChatSection.css';
 const ChatSection = ({ isRefreshing, onRefresh, isSidebarCollapsed, onConversationSelect }) => {
   return (
     <div className="chat-section">
-      <div className="chat-header">
-        <h1>Conversaciones</h1>
-        <p>Gestiona las conversaciones de WhatsApp de tus clientes</p>
-      </div>
-
       <div className="chat-content">
         <ChatInterface 
           isRefreshing={isRefreshing} 
